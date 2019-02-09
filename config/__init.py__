@@ -1,1 +1,1 @@
-genetic_map_hapmap2_grch37="Abigail/CRAFT/genetic_map_HapMapII_GRCh37/genetic_map_GRCh37_chr{0}.txt"
+genetic_map_dir = "/Users/Abigail/CRAFT/genetic_maps/genetic_map_GRCh37_chr{0}.txt"
