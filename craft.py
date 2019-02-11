@@ -42,7 +42,7 @@ def get_options():
         parser.add_argument('--out', action='store', dest='out_file', required=True,
                     help='Output path')
         parser.set_defaults(mhc=False)
-        
+
         args =  parser.parse_args()
 
         # check bim has been specified with plink
@@ -75,7 +75,7 @@ def get_options_2():
         parser.add_argument('--out', action='store', dest='out_file', required=True,
                     help='Output path')
         parser.set_defaults(mhc=False)
-        
+
         args =  parser.parse_args()
 
         # check bim has been specified with plink
@@ -111,10 +111,9 @@ def main():
                  size = float(options.size)
                  index_list = map(lambda d : cf.get_index_snps_cm(d, options.alpha, size, options.mhc, maps), stats_list)
 
+
         # create df of index snps
         index_df = pd.concat(index_list)
-
-        print index_df.head()
 
         index_df.chromosome = index_df.chromosome.astype(int)
         index_df.position = index_df.position.astype(int)

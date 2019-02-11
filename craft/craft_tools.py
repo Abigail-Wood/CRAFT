@@ -50,7 +50,7 @@ def read_plink_2(file):
 	df = pd.read_table(file, delim_whitespace=True)[cols]
 	df.rename(columns={'CHR':'chromosome','SNP':'rsid','BP':'position','A1':'alleleA','P':'pvalue'}, inplace=True)
 	df['alleleB'] = df['alleleA']
-	
+
 	return df
 
 def read_maps(source_dir):
@@ -154,7 +154,7 @@ def get_index_snps_bp(df, alpha, distance, mhc):
 		index_df = index_df.append(index_snp, ignore_index=True)
 
 		# exclude index SNP region
-		df = df.ix[~df.position.between(region_start, region_end)] 
+		df = df.ix[~df.position.between(region_start, region_end)]
 
 	index_df.region_start_bp = index_df.region_start_bp.astype(int)
 	index_df.region_end_bp = index_df.region_end_bp.astype(int)
@@ -178,17 +178,17 @@ def get_index_snps_cm(df, alpha, distance, mhc, maps):
 		index_snp = df.ix[df.pvalue.idxmin()]
 
 		# define region boundaries
-		index_snp_cm = interpolate_cm(index_snp.position, maps[str(index_snp.chromosome.astype(int))])
+		index_snp_cm = interpolate_cm(index_snp.position,maps[str(index_snp.chromosome.astype(int))])
 		region_start = interpolate_bp(index_snp_cm - distance,maps[str(index_snp.chromosome.astype(int))])
 		region_end = interpolate_bp(index_snp_cm + distance,maps[str(index_snp.chromosome.astype(int))])
 		region_size = round((region_end - region_start)/float(1000),1)
 		index_snp = index_snp.append(pd.Series([region_start,region_end,region_size], index=['region_start_cm','region_end_cm','region_size_kb']))
-		
+
 		# add current index SNP to index_df
 		index_df = index_df.append(index_snp, ignore_index=True)
-		
+
 		# exclude index SNP region
-		df = df.ix[~df.position.between(region_start, region_end)] 
+		df = df.ix[~df.position.between(region_start, region_end)]
 
 	index_df.region_start_cm = index_df.region_start_cm.astype(int)
 	index_df.region_end_cm = index_df.region_end_cm.astype(int)
@@ -199,7 +199,7 @@ def base_annotation(df):
 	# define file names
 	annotation_file = "base_annotation.vep"
 	annotation_vcf = "base_annotation.vcf"
-	
+
 	# create default VEP input
 	annot_df = df.copy()
 	annot_df['position2'] = annot_df['position']
@@ -242,5 +242,3 @@ def base_annotation(df):
 	#os.system(rm_cmd)
 
 	return annot_results_df
-
-

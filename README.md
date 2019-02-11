@@ -25,7 +25,7 @@ __Software__
 * R (tested on version 3.3.0)
     - dplyr  
     - tidyr  
-    - stringr 
+    - stringr
     - Gviz  
 
 __iCSF modules__
@@ -134,7 +134,7 @@ These are currently defined witihin the run_all.sh script:
 
 *EPIGENOMES*  
     List of roadmap epigenomics dataset to annotation against    
-    
+
 
 User input file formats
 -----------------------
