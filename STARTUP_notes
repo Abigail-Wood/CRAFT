@@ -1,0 +1,8 @@
+python -m venv 2019-02-craft
+cd 2019-02-craft
+. bin/activate
+git clone git@github.com:Abigail-Wood/CRAFT.git
+pip install numpy
+pip install scipy
+pip install pandas
+pip install pyvcf

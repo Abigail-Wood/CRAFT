@@ -5,6 +5,12 @@
 
 # CRAFT generated files #
 #########################
+__pycache__
 base_annotation.vcf
 base_annotation.vep
 .pyc
+*.craft
+
+# Developer notes files #
+#########################
+*_notes
