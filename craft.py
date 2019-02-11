@@ -115,11 +115,13 @@ def main():
         # create df of index snps
         index_df = pd.concat(index_list)
 
+        print(index_df.head())
+
         index_df.chromosome = index_df.chromosome.astype(int)
         index_df.position = index_df.position.astype(int)
 
         # annotate index SNPs
-        annotated_index_df = cf.base_annotation(index_df)
+        # annotated_index_df = cf.base_annotation(index_df)
 
         # add additional information if supplied
         if options.decorate_file:
@@ -127,7 +129,7 @@ def main():
 
         # write index SNP table
         out_file = options.out_file
-        annotated_index_df.to_csv(out_file, sep='\t', index=False)
+        index_df.to_csv(out_file, sep='\t', index=False)
 
 if __name__=='__main__':
 	main()

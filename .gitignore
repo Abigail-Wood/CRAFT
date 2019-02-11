@@ -2,3 +2,8 @@
 ######################
 .DS_Store
 .DS_Store?
+
+# CRAFT generated files #
+#########################
+base_annotation.vcf
+base_annotation.vep
