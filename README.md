@@ -19,6 +19,9 @@ __Software__ (TO BE VERIFIED)
     - argparse  
     - re
 
+-----------
+OLD MATERIAL - DO NOT USE, FOR REFERENCE ONLY.
+
 __iCSF modules__ (TO BE VERIFIED)
 When running on the University of Manchester computing clusters (iCSF) the software dependencies can be dealt with by loading the following modules:
 
@@ -35,15 +38,6 @@ mkdir -p source_data/ensembl/{cache,plugins}
 cd source_data/ensembl/cache/
 wget ftp://ftp.ensembl.org/pub/release-84/variation/VEP/homo_sapiens_vep_84_GRCh37.tar.gz
 tar -zxvf homo_sapiens_vep_84_GRCh37.tar.gz
-cd -
-```
-
-Download CADD plugin data
-```
-mkdir -p source_data/ensembl/plugins/CADD
-cd source_data/ensembl/plugins/CADD/
-wget http://krishna.gs.washington.edu/download/CADD/v1.3/1000G.tsv.gz
-wget http://krishna.gs.washington.edu/download/CADD/v1.3/1000G.tsv.gz.tbi
 cd -
 ```
 
@@ -80,12 +74,6 @@ Output
 ------
 
 Output is returned to the user at multiple levels:
-
-Plots
-
-Bed tracks/hub
-
-SNP level annotation
 
 
 Known issues
