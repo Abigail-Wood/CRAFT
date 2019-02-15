@@ -2,13 +2,14 @@
 
 import sys
 import os
-import glob
 import argparse
+import glob
+
 import pandas as pd
 import numpy as np
 
-# import craft module
 import craft.craft_tools as cf
+import craft.read as read
 import craft.config as config
 
 def get_options():
@@ -17,56 +18,57 @@ def get_options():
 
         parser.add_argument('--file', action='store', dest='file', required=True,
                     help='Input summary statistics file. Can be multiple files with use of *')
+        parser.add_argument('--file_type', action='store', choices=['snptest','plink','plink2','generic'], dest='file_type',
+                    help='Define input file type - snptest, plink, plink2, indexsnps, generic')
         parser.add_argument('--bim', action='store', dest='bim_file',
-                    help='PLINK bim file, required if using PLINK input')
-        parser.add_argument('--file_type', action='store', choices=['snptest','plink','generic'], dest='file_type',
-                    help='Define input file type - snptest, plink, generic')
+                    help='Specify BIM file location (required if using plink input)')
         parser.add_argument('--decorate', action='store', dest='decorate_file',
-                    help='Tab delimited containing additional information to be merged with results (rsid required)')
+                    help='Tab delimited file containing additional information to be merged with results (rsid required)')
         parser.add_argument('--alpha', action='store', dest='alpha', default=5e-8, type=float,
                     help='P-value threshold for declaring index SNPs. Default = 5e-8')
         parser.add_argument('--define_region', action='store', choices=['cm','bp'], dest='region_type',
                     help='Define region around index SNP cm or bp')
         parser.add_argument('--distance', action='store', dest='size', required=True,
-                    help='Define distance around index SNP by base-pair or cM. E.g. 500000 for bp or 0.1 for cM')
+                    help='Define distance around index SNP by base-pair or cM. e.g. 500000 for bp or 0.1 for cM')
         parser.add_argument('--no_mhc', action='store_false', dest='mhc',
                     help='Exclude the MHC region. Default is to exclude')
         parser.add_argument('--mhc', action='store_true', dest='mhc',
                     help='Exclude the MHC region. Default is to exclude')
         parser.add_argument('--out', action='store', dest='out_file', required=True,
-                    help='Output path')
+                    help='Output file path')
         parser.set_defaults(mhc=False)
 
         args =  parser.parse_args()
 
-        # TO-DO: Add argument testing, e.g. check bim has been specified with plink
+        # TO-DO: Add argument testing, e.g. check bim specified with plink
         return args
 
 
 def main():
 
-        # define input/output
+        # Define input/output
         options = get_options()
 
-        # read summary stats
+        # Read summary stats file (according to format argument)
         file_names = glob.glob(options.file)
-
         if options.file_type == "snptest":
-                stats_list = map(cf.read_snptest, file_names)
-
-        if options.file_type == "generic":
-                stats_list = map(cf.read_generic, file_names)
-
+            stats_list = map(read.snptest, file_names)
         if options.file_type == "plink":
-                stats_list = map(cf.read_plink_2, file_names)
+            stats_list = map(read.plink, file_names)
+        if options.file_type == "plink2":
+            stats_list = map(read.plink2, file_names)
+        if options.file_type == "indexsnps":
+            stats_list = map(read.indexsnps, file_names)
+        if options.file_type == "generic":
+            stats_list = map(read.generic, file_names)
 
-        # get index snps
+        # Get index SNPs
         if options.region_type == "bp":
                  size = int(options.size)
                  index_list = map(lambda d : cf.get_index_snps_bp(d, options.alpha, size, options.mhc), stats_list)
 
         if options.region_type == "cm":
-                 maps = cf.read_maps(config.genetic_map_dir)
+                 maps = read.maps(config.genetic_map_dir)
                  size = float(options.size)
                  index_list = map(lambda d : cf.get_index_snps_cm(d, options.alpha, size, options.mhc, maps), stats_list)
 
@@ -91,4 +93,4 @@ def main():
         index_df.to_csv(out_file, sep='\t', index=False)
 
 if __name__=='__main__':
-	main()
+    main()
