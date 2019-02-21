@@ -1,6 +1,8 @@
 import glob
 import pandas as pd
 
+# Add cases_total or all_total for SNPtest - take from the column!
+
 def snptest(file):
     """ Read snptest data into an internal dataframe. """
     cols = ['rsid','chromosome','position','alleleA','alleleB','info','cases_maf',
@@ -9,6 +11,7 @@ def snptest(file):
     df.rename(columns={'frequentist_add_pvalue':'pvalue'}, inplace=True)
     return df
 
+#
 def plink(file, bim):
     """ Read PLINK (v1) data into an internal dataframe. """
     # read assoc. logistic
@@ -25,7 +28,7 @@ def plink(file, bim):
     df = pd.merge(df,bdf, how='inner',on='rsid')
     return df
 
-def plink2(file):
+def plink_noBIM(file):
     """ Read PLINK2 data into an internal  dataframe. """
     # read assoc.logistic
     cols = ['CHR','SNP','BP','A1','P', 'OR','L95','U95']
