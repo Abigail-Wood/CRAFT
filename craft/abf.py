@@ -25,12 +25,12 @@ def calc_abf(pval, maf, n, prop_cases):
     n = int(n)
     prop_cases = float(prop_cases) if prop_cases else None
 
-    # Estimate variance for quant trait
+    # Estimate variance for quantitative trait
     if prop_cases is None:
         sd_prior = 0.15
         v = var_data(maf, n)
 
-    # Estimate var for cc study
+    # Estimate variance for case/control study
     else:
         sd_prior = 0.2
         v = var_data_cc(maf, n, prop_cases)

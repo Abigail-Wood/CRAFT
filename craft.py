@@ -11,7 +11,7 @@ import numpy as np
 import craft.config as config
 import craft.read as read
 import craft.getIndexSNPs as cf
-import craft.abf as abf
+import craft.chrisabf as abf
 import craft.annotate as annotate
 
 def parse_args():
@@ -93,27 +93,23 @@ def main():
     # If stats analysis output file name specified then run ABF
     if options.outsf != None:
         data = index_df
-        data["logABF"] = data.apply(
+        data["ABF"] = data.apply(
             lambda row: abf.calc_abf(pval=row['pvalue'],
                                  maf=row['all_maf'],
                                  n=row['all_total'],
-                                 prop_cases=None), axis=1)
-        data = data.sort_values("logABF", ascending=False)
+                                 n_controls=row['controls_total'],
+                                 n_cases=row['cases_total']), axis=1)
+        data = data.sort_values("ABF", ascending=False)
 
         # Calculate posterior probability for each SNP
-        sum_lABF = abf.log_sum(data["logABF"])
-        data["postprob"] = data["logABF"].apply(np.exp) / np.exp(sum_lABF)
+        sum_ABF = data["ABF"].sum()
+        print(sum_ABF)
+        data["postprob"] = data["ABF"] / sum_ABF
 
         # Calc cumulative sum of the posterior probabilities
         data["postprob_cumsum"] = data["postprob"].cumsum()
 
-        # Find 99% and 95% credible sets - this is horrible
-        set_idx = data["postprob_cumsum"].gt(0.99).tolist().index(True)
-        data["is99_credset"] = [1] * (set_idx + 1) + [0] * (data.shape[0] - (set_idx + 1))
-        set_idx = data["postprob_cumsum"].gt(0.95).tolist().index(True)
-        data["is95_credset"] = [1] * (set_idx + 1) + [0] * (data.shape[0] - (set_idx + 1))
-
-        # Write
+        # Write all data to output file
         data.to_csv(options.outsf, sep='\t', index=False)
 
         return 0
