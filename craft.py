@@ -8,9 +8,11 @@ import glob
 import pandas as pd
 import numpy as np
 
-import craft.getIndexSNPs as cf
-import craft.read as read
 import craft.config as config
+import craft.read as read
+import craft.getIndexSNPs as cf
+import craft.abf as abf
+import craft.annotate as annotate
 
 def parse_args():
     """ Parse command-line arguments."""
@@ -35,12 +37,9 @@ def parse_args():
                     help='Exclude the MHC region. Default is to exclude')
     parser.add_argument('--out', action='store', dest='out_file', required=True,
                     help='Output file path for index SNP table')
-    parser.add_argument('--outsf', metavar='<file>', type=str,
-                    help='Output sum stats with credible set')
-
+    parser.add_argument('--outsf', metavar='<file>', type=str, dest='outsf',
+                    help='Output file path for sum stats with credible set')
     parser.set_defaults(mhc=False)
-
-    # Add ABF stats output file specifier
 
     # TO-DO: Add argument testing, e.g. check bim specified with plink
     return parser.parse_args()
@@ -85,28 +84,24 @@ def main():
 
     # Add additional information (if supplied)
     if options.decorate_file:
-        annotated_index_df = cf.merge_info(annotated_index_df, options.decorate_file)
+        annotated_index_df = annotate.merge_info(annotated_index_df, options.decorate_file)
 
     # Write index SNP table to specified output file
     out_file = options.out_file
     index_df.to_csv(out_file, sep='\t', index=False)
 
-    # If stats analysis output file name specified...
+    # If stats analysis output file name specified then run ABF
     if options.outsf != None:
         data = index_df
-
-        # Calc ABFs
-        # print(calc_abf(0.808621, 0.17690, 290365, 0.6203537))
-        # Should return -3.311501
         data["logABF"] = data.apply(
-            lambda row: calc_abf(pval=row[args.p_col],
-                                 maf=freq_to_maf(row[args.maf_col]),
-                                 n=row[args.n_col],
-                                 prop_cases=args.prop_cases), axis=1)
+            lambda row: abf.calc_abf(pval=row['pvalue'],
+                                 maf=row['all_maf'],
+                                 n=row['all_total'],
+                                 prop_cases=None), axis=1)
         data = data.sort_values("logABF", ascending=False)
 
         # Calculate posterior probability for each SNP
-        sum_lABF = log_sum(data["logABF"])
+        sum_lABF = abf.log_sum(data["logABF"])
         data["postprob"] = data["logABF"].apply(np.exp) / np.exp(sum_lABF)
 
         # Calc cumulative sum of the posterior probabilities

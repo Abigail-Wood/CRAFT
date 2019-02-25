@@ -3,6 +3,10 @@
 .DS_Store
 .DS_Store?
 
+# Old files #
+#############
+abf_corrected.R
+
 # CRAFT generated files #
 #########################
 __pycache__
@@ -13,4 +17,5 @@ base_annotation.vep
 
 # Developer notes files #
 #########################
-*_notes
+TODO_notes
+STARTUP_notes
