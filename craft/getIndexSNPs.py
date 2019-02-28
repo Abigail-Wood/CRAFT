@@ -33,7 +33,7 @@ def interpolate_cm(bp, map_file):
 def interpolate_bp(cm,map_file):
     """ TODO: summary docstring line.
 
-    Given a genetic distance (cM) and chromosome return the base position. Exact matching not performed as precision of floating points for cm a match is unlikely. Base position with closest cM is returned.
+    Given a genetic distance (cM) and chromosome return the base position. Exact matching not performed as precision of floating points for cM a match is unlikely. Base position with closest cM is returned.
     """
     index_location = np.searchsorted(np.array(map_file['Map(cM)']), cm)
 
@@ -113,3 +113,25 @@ def get_index_snps_bp(df, alpha, distance, mhc):
     index_df.region_start_bp = index_df.region_start_bp.astype(int)
     index_df.region_end_bp = index_df.region_end_bp.astype(int)
     return index_df
+
+
+def get_locus_snps(stats_map, index_df):
+    """ Create dataframe of SNPs near index SNPs."""
+    # Create a dataframe for stats_list and output dataframe for locus SNPs
+    stats_list = list(stats_map)
+    stats_list_df = pd.DataFrame({'col':stats_list})
+    col_names = list(stats_list_df.columns.values) + ['index_rsid']
+    locus_snps_df = pd.DataFrame(columns=col_names)
+
+    # For each index SNP establish a locus
+    for index, row in index_df.iterrows():
+        start = row['region_start_cm']
+        end = row['region_end_cm']
+        index_rsid = row['rsid']
+        # For each SNP in summary stats, establish if in index SNP locus
+        for index, row in stats_list_df.iterrows():
+            position = row['position']
+            if (position >= start and position <= end):
+                row = row.append(pd.Series([index_rsid], index=['index_rsid']))
+                locus_snps_df = locus_snps_df.append(row, ignore_index=True)
+    return locus_snps_df

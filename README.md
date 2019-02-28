@@ -16,15 +16,16 @@ Requirements
 
 __Software__ (TO BE VERIFIED)
 * Python 3
-    - vcf  
     - pandas  
     - numpy
     - scipy
+    - vcf
 
 Source data
 -----------
 
 __Variant Effect Predictor (VEP)__
+IF using on Manchester Computing Cluster...
 
 Get the GRCh37 (release 84) core cache (not included due to size)
 ```
@@ -49,12 +50,14 @@ Test data
 ---------
 Currently two sets of test data: snptest format (chromosome 1, X SNPs) and plink format (chromosome 1, X SNPs) based on associations with psoriatic arthritis (PsA).
 
+We also included ABF validation data.
+
 User input file formats
 -----------------------
 
 __GWAS summary statistics__
 
-Input file is tab, space or comma-delimited and defined as folllows:
+Input file is tab, space or comma-delimited and defined as follows:
 
 ```
 SNPID      CHROM  POS       A1  A2  A1_UNAFF  PVAL

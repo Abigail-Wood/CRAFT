@@ -5,7 +5,7 @@ from scipy.stats import norm
 
 def calc_abf(pval, maf, n, n_controls, n_cases):
     """ Calculate Approximate Bayes Factor (Wakefield, 2009, Genet Epidemiol.).
-        Based on code from coloc: https://github.com/chr1swallace/coloc
+        Based on Chris Wallace work
     Args:
         pval (float): GWAS p-value
         maf (float): Minor allele freq
@@ -47,9 +47,18 @@ def calc_abf(pval, maf, n, n_controls, n_cases):
     VW = V + W
     ABF = 2 * np.log(np.sqrt(VW/V)) ** (- z**2 * W / (2 * VW) )
 
-    print(ABF)
-
     return ABF
+
+def calc_postprob(locus_snps_df):
+    """ Calculate posterior probability for each SNP."""
+    sum_ABF = locus_snps_df["ABF"].sum()
+    locus_snps_df["postprob"] = locus_snps_df["ABF"] / sum_ABF
+    return locus_snps_df
+
+def calc_postprobsum(locus_snps_df):
+    """ Calc cumulative sum of the posterior probabilities."""
+    locus_snps_df["postprob_cumsum"] = locus_snps_df["postprob"].cumsum()
+    return locus_snps_df
 
 def main():
     calc_abf(0.05, 0.01, 1000, 500, 500)

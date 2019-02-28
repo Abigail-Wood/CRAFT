@@ -40,7 +40,6 @@ def parse_args():
     parser.add_argument('--outsf', metavar='<file>', type=str, dest='outsf',
                     help='Output file path for sum stats with credible set')
     parser.set_defaults(mhc=False)
-
     # TO-DO: Add argument testing, e.g. check bim specified with plink
     return parser.parse_args()
 
@@ -51,40 +50,34 @@ def main():
     # Read input summary statistics file (according to format)
     file_names = glob.glob(options.file)
     if options.file_type == "snptest":
-        stats_list = map(read.snptest, file_names)
+        stats_map = map(read.snptest, file_names)
     if options.file_type == "plink":
-        stats_list = map(read.plink, file_names)
+        stats_map = map(read.plink, file_names)
     if options.file_type == "plink_noBIM":
-        stats_list = map(read.plink2, file_names)
+        stats_map = map(read.plink2, file_names)
     if options.file_type == "indexsnps":
-        stats_list = map(read.indexsnps, file_names)
+        stats_map = map(read.indexsnps, file_names)
     if options.file_type == "generic":
-        stats_list = map(read.generic, file_names)
+        stats_map = map(read.generic, file_names)
 
     # Get index SNPs
     if options.region_type == "cm":
-        maps = read.maps(config.genetic_map_dir)
         size = float(options.size)
-        index_list = map(lambda d : cf.get_index_snps_cm(d, options.alpha, size, options.mhc, maps), stats_list)
-
+        maps = read.maps(config.genetic_map_dir)
+        index_list = map(lambda d : cf.get_index_snps_cm(d, options.alpha, size, options.mhc, maps), stats_map)
     if options.region_type == "bp":
         size = int(options.size)
-        index_list = map(lambda d : cf.get_index_snps_bp(d, options.alpha, size, options.mhc), stats_list)
+        index_list = map(lambda d : cf.get_index_snps_bp(d, options.alpha, size, options.mhc), stats_map)
 
-    # Create df of index SNPs
-    index_df = pd.concat(index_list)
-
-    print(index_df.head())
-
+    index_df = pd.concat(index_list) # Create df of index SNPs
     index_df.chromosome = index_df.chromosome.astype(int)
     index_df.position = index_df.position.astype(int)
 
     # Annotate index SNPs (commented out)
     ## annotated_index_df = cf.base_annotation(index_df)
-
     # Add additional information (if supplied)
-    if options.decorate_file:
-        annotated_index_df = annotate.merge_info(annotated_index_df, options.decorate_file)
+    # if options.decorate_file:
+    #    annotated_index_df = annotate.merge_info(annotated_index_df, options.decorate_file)
 
     # Write index SNP table to specified output file
     out_file = options.out_file
@@ -92,26 +85,22 @@ def main():
 
     # If stats analysis output file name specified then run ABF
     if options.outsf != None:
-        data = index_df
+        locus_snps_df = cf.get_locus_snps(stats_map, index_df)
+        locus_snps_df.head()
+
+        data = locus_snps_df
         data["ABF"] = data.apply(
             lambda row: abf.calc_abf(pval=row['pvalue'],
-                                 maf=row['all_maf'],
-                                 n=row['all_total'],
-                                 n_controls=row['controls_total'],
-                                 n_cases=row['cases_total']), axis=1)
+                                maf=row['all_maf'],
+                                n=row['all_total'],
+                                n_controls=row['controls_total'],
+                                n_cases=row['cases_total']), axis=1)
         data = data.sort_values("ABF", ascending=False)
-
-        # Calculate posterior probability for each SNP
-        sum_ABF = data["ABF"].sum()
-        print(sum_ABF)
-        data["postprob"] = data["ABF"] / sum_ABF
-
-        # Calc cumulative sum of the posterior probabilities
-        data["postprob_cumsum"] = data["postprob"].cumsum()
-
+        #calculate posterior probabilities and cumulative postprob.
+        locus_snps_df = calc_postprob(locus_snps_df)
+        locus_snps_df = calc_postprobsum(locus_snps_df)
         # Write all data to output file
         data.to_csv(options.outsf, sep='\t', index=False)
-
         return 0
 
 if __name__=='__main__':
