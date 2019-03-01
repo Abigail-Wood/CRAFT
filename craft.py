@@ -10,7 +10,7 @@ import numpy as np
 
 import craft.config as config
 import craft.read as read
-import craft.getIndexSNPs as gs
+import craft.getSNPs as gs
 import craft.abf as abf
 import craft.annotate as annotate
 
@@ -65,11 +65,11 @@ def main():
     #z = list(map(f, k))
 
     # Get index SNPs
-    if options.region_type == "cm":
+    if options.region_type == 'cm':
         size = float(options.size)
         maps = read.maps(config.genetic_map_dir)
         index = [gs.get_index_snps_cm(d, options.alpha, size, options.mhc,     maps) for d in stats]
-    if options.region_type == "bp":
+    if options.region_type == 'bp':
         size = int(options.size)
         index = [gs.get_index_snps_bp(d, options.alpha, size, options.mhc)
                 for d in stats]
@@ -88,23 +88,22 @@ def main():
     out_file = options.out_file
     index_df.to_csv(out_file, sep='\t', index=False)
 
-    # If stats analysis output file name specified then run ABF
+    # If stats analysis output filename, calculate ABF and posterior prob.
     if options.outsf != None:
         for stat_df in stats:
-            locus_snps_df = gs.get_locus_snps(stat_df, index_df)
-        data = locus_snps_df
-        data["ABF"] = data.apply(
+            data = gs.get_locus_snps(stat_df, index_df)
+        data['ABF'] = data.apply(
             lambda row: abf.calc_abf(pval=row['pvalue'],
                                 maf=row['all_maf'],
                                 n=row['all_total'],
                                 n_controls=row['controls_total'],
                                 n_cases=row['cases_total']), axis=1)
-        data = data.sort_values("ABF", ascending=False)
-        #calculate posterior probabilities and cumulative postprob.
+        data = data.sort_values('ABF', ascending=False)
         data = abf.calc_postprob(data)
         data = abf.calc_postprobsum(data)
+
         # Write all data to output file
-        data.to_csv(options.outsf, sep='\t', index=False)
+        data.to_csv(options.outsf, sep='\t', float_format='%5sf', index=False)
         return 0
 
 if __name__=='__main__':

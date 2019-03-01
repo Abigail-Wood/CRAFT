@@ -4,7 +4,9 @@ import pandas as pd
 from scipy.stats import norm
 
 def calc_abf(pval, maf, n, n_controls, n_cases):
-    """ Calculate Approximate Bayes Factor (Wakefield, 2009, Genet Epidemiol.).
+    """ Calculate Approximate Bayes Factor.
+
+        (Wakefield, 2009, Genet Epidemiol.)
         Based on Chris Wallace work
     Args:
         pval (float): GWAS p-value
@@ -51,13 +53,13 @@ def calc_abf(pval, maf, n, n_controls, n_cases):
 
 def calc_postprob(data):
     """ Calculate posterior probability for each SNP."""
-    sum_ABF = data["ABF"].sum()
+    sum_ABF = data['ABF'].sum()
     for index, row in data.iterrows():
-        data["postprob"] = data["ABF"] / sum_ABF
+        data['postprob'] = data['ABF'] / sum_ABF
     return data
 
 def calc_postprobsum(data):
     """ Calc cumulative sum of the posterior probabilities."""
     for index, row in data.iterrows():
-        data["postprob_cumsum"] = data["postprob"].cumsum()
+        data['postprob_cumsum'] = data['postprob'].cumsum()
     return data
