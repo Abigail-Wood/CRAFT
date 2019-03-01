@@ -1,71 +1,63 @@
-#!/usr/bin/env python
-
-import sys
-
 import numpy as np
 import pandas as pd
 
 from scipy.stats import norm
 
-def calc_abf(pval, maf, n, prop_cases):
+def calc_abf(pval, maf, n, n_controls, n_cases):
     """ Calculate Approximate Bayes Factor (Wakefield, 2009, Genet Epidemiol.).
-        Based on code from coloc: https://github.com/chr1swallace/coloc
+        Based on Chris Wallace work
     Args:
         pval (float): GWAS p-value
         maf (float): Minor allele freq
         n (int): Sample size
-        prop_cases (float or None): proportion of cases, if left blank will assume quantitative trait
+        n_controls: Number of controls
+        n_cases: Number of cases
     Returns:
-        natural log(ABF)
+        ABF
     """
 
     # Assert/set types
     pval = float(pval)
     maf = float(maf)
     n = int(n)
-    prop_cases = float(prop_cases) if prop_cases else None
-
-    # Estimate variance for quantitative trait
-    if prop_cases is None:
-        sd_prior = 0.15
-        v = var_data(maf, n)
-
-    # Estimate variance for case/control study
-    else:
-        sd_prior = 0.2
-        v = var_data_cc(maf, n, prop_cases)
+    n_controls = int(n_controls)
+    n_cases = int(n_cases)
 
     # Calculate Z-score
     z = np.absolute(norm.ppf(pval / 2))
 
-    # Calc shrinkage factor: ratio of the prior variance to the total variance
-    r = sd_prior**2 / (sd_prior**2 + v)
+    # Multiplicative model
+    x0 = 0
+    x1 = 1
+    x2 = 2
+    scale0 = n_controls
+    scale1 = n_cases
 
-    # Approximate BF - ln scale to compare in log natural scale with LR diff
-    lABF = 0.5 * (np.log(1 - r) + (r * z**2))
+    # No idea what this does
+    d2 = (1-maf)**2 * x0**2 + 2*maf*(1-maf)*x1 + maf**2 * x2**2
+    d1 = (1-maf)**2 * x0 + 2*maf*(1-maf)*x1 + maf**2 * x2
+    V = (n_controls + n_cases) / (n_controls * n_cases * (d2-d1**2))
 
-    return lABF
+    # Scale V (by assignment of scaling parameters this is always 1)
+    scale = ((n_controls + n_cases)/(scale0 + scale1)) * (scale0/n_controls) * (scale1/n_cases)
+    V = V * scale
 
-def var_data(maf, n):
-    """ Calc variance of MLE of beta for quantitative trait, assuming var(y)=0
-    """
-    var = 1 / (2 * n * maf * (1 - maf))
-    return var
+    # Compute W (no idea what this is either)
+    W = (np.log(1.5) / norm.ppf(0.99))**2
+    VW = V + W
+    ABF = 2 * np.log(np.sqrt(VW/V)) ** (- z**2 * W / (2 * VW) )
 
-def var_data_cc(maf, n, prop_cases):
-    """ Calc variance of MLE of beta for case-control
-    """
-    var = 1 / (2 * n * maf * (1 - maf) * prop_cases * (1 - prop_cases))
-    return var
+    return ABF
 
-def log_sum(l):
-    """ Calculates the log of the sum of the exponentiated logs taking out the
-        max, i.e. insuring that the sum is not Inf
-    Args:
-        l (pandas Series)
-    Returns:
-        Sum of exponentiated logs
-    """
-    l_max = l.max()
-    l_logsum = l_max + np.log(np.sum(np.exp(l - l_max)))
-    return l_logsum
+def calc_postprob(data):
+    """ Calculate posterior probability for each SNP."""
+    sum_ABF = data["ABF"].sum()
+    for index, row in data.iterrows():
+        data["postprob"] = data["ABF"] / sum_ABF
+    return data
+
+def calc_postprobsum(data):
+    """ Calc cumulative sum of the posterior probabilities."""
+    for index, row in data.iterrows():
+        data["postprob_cumsum"] = data["postprob"].cumsum()
+    return data

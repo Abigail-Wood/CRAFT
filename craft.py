@@ -10,8 +10,8 @@ import numpy as np
 
 import craft.config as config
 import craft.read as read
-import craft.getIndexSNPs as cf
-import craft.chrisabf as abf
+import craft.getIndexSNPs as gs
+import craft.abf as abf
 import craft.annotate as annotate
 
 def parse_args():
@@ -43,38 +43,43 @@ def parse_args():
     # TO-DO: Add argument testing, e.g. check bim specified with plink
     return parser.parse_args()
 
+# All the reading functions. Each takes a file name and returns a DataFrame.
+
+readers = {'snptest': read.snptest,
+           'plink': read.plink,
+           'plink2': read.plink_noBIM,
+           'indexsnps': read.indexsnps,
+           'generic': read.generic,
+}
+
 def main():
     # Define all command-line specified options
     options = parse_args()
 
     # Read input summary statistics file (according to format)
     file_names = glob.glob(options.file)
-    if options.file_type == "snptest":
-        stats_map = map(read.snptest, file_names)
-    if options.file_type == "plink":
-        stats_map = map(read.plink, file_names)
-    if options.file_type == "plink_noBIM":
-        stats_map = map(read.plink2, file_names)
-    if options.file_type == "indexsnps":
-        stats_map = map(read.indexsnps, file_names)
-    if options.file_type == "generic":
-        stats_map = map(read.generic, file_names)
+    reader = readers[options.file_type]
+    stats = [reader(n) for n in file_names]
+
+    #z = [f(x) for x in k]
+    #z = list(map(f, k))
 
     # Get index SNPs
     if options.region_type == "cm":
         size = float(options.size)
         maps = read.maps(config.genetic_map_dir)
-        index_list = map(lambda d : cf.get_index_snps_cm(d, options.alpha, size, options.mhc, maps), stats_map)
+        index = [gs.get_index_snps_cm(d, options.alpha, size, options.mhc,     maps) for d in stats]
     if options.region_type == "bp":
         size = int(options.size)
-        index_list = map(lambda d : cf.get_index_snps_bp(d, options.alpha, size, options.mhc), stats_map)
+        index = [gs.get_index_snps_bp(d, options.alpha, size, options.mhc)
+                for d in stats]
 
-    index_df = pd.concat(index_list) # Create df of index SNPs
+    index_df = pd.concat(index) # Create df of index SNPs
     index_df.chromosome = index_df.chromosome.astype(int)
     index_df.position = index_df.position.astype(int)
 
     # Annotate index SNPs (commented out)
-    ## annotated_index_df = cf.base_annotation(index_df)
+    ## annotated_index_df = gs.base_annotation(index_df)
     # Add additional information (if supplied)
     # if options.decorate_file:
     #    annotated_index_df = annotate.merge_info(annotated_index_df, options.decorate_file)
@@ -85,9 +90,8 @@ def main():
 
     # If stats analysis output file name specified then run ABF
     if options.outsf != None:
-        locus_snps_df = cf.get_locus_snps(stats_map, index_df)
-        locus_snps_df.head()
-
+        for stat_df in stats:
+            locus_snps_df = gs.get_locus_snps(stat_df, index_df)
         data = locus_snps_df
         data["ABF"] = data.apply(
             lambda row: abf.calc_abf(pval=row['pvalue'],
@@ -97,8 +101,8 @@ def main():
                                 n_cases=row['cases_total']), axis=1)
         data = data.sort_values("ABF", ascending=False)
         #calculate posterior probabilities and cumulative postprob.
-        locus_snps_df = calc_postprob(locus_snps_df)
-        locus_snps_df = calc_postprobsum(locus_snps_df)
+        data = abf.calc_postprob(data)
+        data = abf.calc_postprobsum(data)
         # Write all data to output file
         data.to_csv(options.outsf, sep='\t', index=False)
         return 0

@@ -115,23 +115,22 @@ def get_index_snps_bp(df, alpha, distance, mhc):
     return index_df
 
 
-def get_locus_snps(stats_map, index_df):
+def get_locus_snps(stats, index_df):
     """ Create dataframe of SNPs near index SNPs."""
     # Create a dataframe for stats_list and output dataframe for locus SNPs
-    stats_list = list(stats_map)
-    stats_list_df = pd.DataFrame({'col':stats_list})
-    col_names = list(stats_list_df.columns.values) + ['index_rsid']
+    stats_df = pd.DataFrame(stats)
+    col_names = list(stats_df.columns.values) + ['index_rsid']
     locus_snps_df = pd.DataFrame(columns=col_names)
 
-    # For each index SNP establish a locus
+    # For each index SNP establish a locus start, end, and index snp id
     for index, row in index_df.iterrows():
         start = row['region_start_cm']
         end = row['region_end_cm']
         index_rsid = row['rsid']
         # For each SNP in summary stats, establish if in index SNP locus
-        for index, row in stats_list_df.iterrows():
+        for index, row in stats_df.iterrows():
             position = row['position']
             if (position >= start and position <= end):
-                row = row.append(pd.Series([index_rsid], index=['index_rsid']))
+                row['index_rsid'] = index_rsid
                 locus_snps_df = locus_snps_df.append(row, ignore_index=True)
     return locus_snps_df
