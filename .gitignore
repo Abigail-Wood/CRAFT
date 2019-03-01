@@ -20,3 +20,7 @@ base_annotation.vep
 # Developer notes files #
 #########################
 *_notes
+
+# Required software #
+###############
+finemap_v1.3.1_MacOSX/

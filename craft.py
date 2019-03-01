@@ -13,6 +13,7 @@ import craft.read as read
 import craft.getSNPs as gs
 import craft.abf as abf
 import craft.annotate as annotate
+import craft.finemap as finemap
 
 def parse_args():
     """ Parse command-line arguments."""
@@ -39,7 +40,12 @@ def parse_args():
                     help='Output file path for index SNP table')
     parser.add_argument('--outsf', metavar='<file>', type=str, dest='outsf',
                     help='Output file path for sum stats with credible set')
-    parser.set_defaults(mhc=False)
+    parser.add_argument('--finemap', action='store_true', dest='finemap',
+                    help='Output file path for sum stats with credible set')
+    parser.add_argument('--no-finemap', action='store_false', dest='finemap',
+                    help='Output file path for sum stats with credible set')
+    parser.set_defaults(mhc=False, finemap=True)
+
     # TO-DO: Add argument testing, e.g. check bim specified with plink
     return parser.parse_args()
 
@@ -60,9 +66,6 @@ def main():
     file_names = glob.glob(options.file)
     reader = readers[options.file_type]
     stats = [reader(n) for n in file_names]
-
-    #z = [f(x) for x in k]
-    #z = list(map(f, k))
 
     # Get index SNPs
     if options.region_type == 'cm':
@@ -89,7 +92,7 @@ def main():
     index_df.to_csv(out_file, sep='\t', index=False)
 
     # If stats analysis output filename, calculate ABF and posterior prob.
-    if options.outsf != None:
+    if options.outsf:
         for stat_df in stats:
             data = gs.get_locus_snps(stat_df, index_df)
         data['ABF'] = data.apply(
@@ -103,8 +106,12 @@ def main():
         data = abf.calc_postprobsum(data)
 
         # Write all data to output file
-        data.to_csv(options.outsf, sep='\t', float_format='%5sf', index=False)
-        return 0
+        data.to_csv(options.outsf, sep='\t', float_format='%5f', index=False)
+
+    if options.finemap:
+        print('finemap is on!')
+
+    return 0
 
 if __name__=='__main__':
     main()

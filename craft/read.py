@@ -5,9 +5,9 @@ import pandas as pd
 
 def snptest(file):
     """ Read snptest data into an internal dataframe. """
-    cols = ['rsid','chromosome','position','alleleA','alleleB', 'all_total', 'cases_total', 'controls_total','all_maf','frequentist_add_pvalue']
+    cols = ['rsid','chromosome','position','alleleA','alleleB', 'all_total', 'cases_total', 'controls_total','all_maf','frequentist_add_pvalue','frequentist_add_beta_1', 'frequentist_add_se_1']
     df = pd.read_table(file, sep=' ', comment='#')[cols]
-    df.rename(columns={'frequentist_add_pvalue':'pvalue'}, inplace=True)
+    df.rename(columns={'frequentist_add_pvalue':'pvalue', 'frequentist_add_beta_1':'beta', 'frequentist_add_se_1':'se'}, inplace=True)
     return df
 
 def plink(file, bim):
