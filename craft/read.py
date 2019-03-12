@@ -1,11 +1,12 @@
 import glob
-import pandas as pd
+import os
 
-# Add cases_total or all_total for SNPtest - take from the column!
+import pandas as pd
 
 def snptest(file):
     """ Read snptest data into an internal dataframe. """
-    cols = ['rsid','chromosome','position','alleleA','alleleB', 'all_total', 'cases_total', 'controls_total','all_maf','frequentist_add_pvalue','frequentist_add_beta_1', 'frequentist_add_se_1']
+    cols = ['chromosome','alleleA','alleleB','rsid','position','all_total', 'cases_total','controls_total','all_maf','frequentist_add_pvalue',
+    'frequentist_add_beta_1', 'frequentist_add_se_1']
     df = pd.read_table(file, sep=' ', comment='#')[cols]
     df.rename(columns={'frequentist_add_pvalue':'pvalue', 'frequentist_add_beta_1':'beta', 'frequentist_add_se_1':'se'}, inplace=True)
     return df
@@ -36,13 +37,22 @@ def plink_noBIM(file):
     return df
 
 def indexsnps(file):
-    """ Read CRAFT output table of index SNPs for fine-mapping use (TBD). """
+    """ Read in CRAFT output file of index SNPs."""
+    cols = ['chromosome','rsid','alleleA','alleleB','position','all_total', 'cases_total','controls_total','all_maf','pvalue',
+    'beta', 'se','region_start_cm','region_end_cm','region_size_kb']
     df = pd.read_table(file, sep='\t')
     return df
 
-def generic(file):
-    """Read tab-separated data into an internal dataframe. """
+def csv(file):
+    """Read csv data into an internal dataframe. """
+    cols = ['chromosome','rsid','alleleA','alleleB','position','all_total', 'cases_total','controls_total','all_maf','pvalue',
+    'beta', 'se']
     df = pd.read_table(file, sep='\t')
+    return df
+
+
+    df = pd.read_table(file, sep=' ', comment='#')[cols]
+    df.rename(columns={'frequentist_add_pvalue':'pvalue', 'frequentist_add_beta_1':'beta', 'frequentist_add_se_1':'se'}, inplace=True)
     return df
 
 def maps(source_dir):
@@ -54,3 +64,13 @@ def maps(source_dir):
         chromosome = map_file['Chromosome'].ix[0].strip('chr')
         maps[chromosome] = map_file
     return maps
+
+def annovar(file , file_exonic, colnames):
+    """ Read annovar output into an internal dataframe. """
+    df = pd.DataFrame(columns=colnames)
+    if os.path.getsize(file) != 0:
+        df = df.append(pd.read_csv(file, sep='\t', names = colnames))
+    if os.path.getsize(file_exonic) != 0:
+        df2 = pd.read_csv(file_exonic, sep='\t', names = colnames, usecols=range(1,(len(colnames) + 1)))
+        df = df.append(df2)
+    return df

@@ -20,7 +20,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--file', action='store', dest='file', required=True,
                     help='Input summary statistics file. Can be multiple files with use of *')
-    parser.add_argument('--file_type', action='store', choices=['snptest','plink','plink2','generic'], dest='file_type',
+    parser.add_argument('--file_type', action='store', choices=['snptest','plink','plink2','indexsnps','csv'], dest='file_type',
                     help='Define input file type - snptest, plink, plink2, indexsnps, generic')
     parser.add_argument('--bim', action='store', dest='bim_file',
                     help='Specify BIM file location (required if using plink input)')
@@ -55,7 +55,7 @@ readers = {'snptest': read.snptest,
            'plink': read.plink,
            'plink2': read.plink_noBIM,
            'indexsnps': read.indexsnps,
-           'generic': read.generic,
+           'csv': read.csv,
 }
 
 def main():
@@ -81,11 +81,9 @@ def main():
     index_df.chromosome = index_df.chromosome.astype(int)
     index_df.position = index_df.position.astype(int)
 
-    # Annotate index SNPs (commented out)
-    ## annotated_index_df = gs.base_annotation(index_df)
-    # Add additional information (if supplied)
-    # if options.decorate_file:
-    #    annotated_index_df = annotate.merge_info(annotated_index_df, options.decorate_file)
+    # Annotate index SNPs
+    index_df = annotate.prepare_df_annoVar(index_df)
+    index_df = annotate.base_annotation_annoVar(index_df)
 
     # Write index SNP table to specified output file
     out_file = options.out_file
@@ -102,15 +100,18 @@ def main():
                                 n_controls=row['controls_total'],
                                 n_cases=row['cases_total']), axis=1)
         data = data.sort_values('ABF', ascending=False)
-        data = abf.calc_postprob(data)
-        data = abf.calc_postprobsum(data)
+
+        print(data.head())
+        # Annotate all SNPs
+        data = annotate.prepare_df_annoVar(data)
+        data = annotate.base_annotation_annoVar(data)
 
         # Write all data to output file
         data.to_csv(options.outsf, sep='\t', float_format='%5f', index=False)
 
     if options.finemap:
         print('finemap is on!')
-
+        finemap.open()
     return 0
 
 if __name__=='__main__':

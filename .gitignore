@@ -6,6 +6,7 @@
 # Old files #
 #############
 old/
+test/abf_validation_data/
 
 # CRAFT generated files #
 #########################
