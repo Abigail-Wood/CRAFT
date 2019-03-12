@@ -118,11 +118,12 @@ def get_locus_snps(snps, index):
     """ Create dataframe of SNPs near index SNPs."""
     snps = snps.set_index('position')
     snps['index_rsid'] = ''
-    locus_snps = pd.DataFrame(columns=snps.columns)
+    locus_snps = pd.DataFrame(columns=snps.columns,index=pd.Index([],name='position'))
 
     # For each index row, get the SNPs in that locus
     for index, row in index.iterrows():
         snps_in_locus = snps.loc[row.region_start_cm:row.region_end_cm].copy()
         snps_in_locus['index_rsid'] = row.rsid
         locus_snps = locus_snps.append(snps_in_locus)
+    locus_snps = locus_snps.reset_index()
     return locus_snps
