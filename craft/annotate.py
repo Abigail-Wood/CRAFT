@@ -1,68 +1,47 @@
 import os
 import re
+import tempfile
 
 import vcf as pyvcf
 
 import craft.config as config
+import craft.read as read
 
-def base_annotation(df):
-    """ TODO: summary docstring line.
+def prepare_df_annoVar(df):
+    """ TO-DO: docstring
 
-    Annotates SNPs using VEP. Currently *not working*. Has dependencies.
-    """
-    # define file names
-    annotation_file = 'base_annotation.vep'
-    annotation_vcf = 'base_annotation.vcf'
+    Docstring contents """
+    # make a list of all column names; position repeats twice for input
+    df['position2'] = df['position']
+    wanted = ['chromosome', 'position', 'position2','alleleA', 'alleleB']
+    colnames = df.columns
 
-    # create default VEP input
-    annot_df = df.copy()
-    annot_df['position2'] = annot_df['position']
-    annot_df['alleles'] =  annot_df['alleleA'] + '/' + annot_df['alleleB']
-    annot_df['strand'] = 1
-    annot_df = annot_df[['chromosome','position','position2','alleles','strand']]
-    annot_df.to_csv(annotation_file, sep='\t', index=False, header=False)
+    # list comprehensions to identify first 5 column names
+    final_colnames = [col for col in wanted if col in colnames] + [col for col in colnames if col not in wanted]
 
-    # perform annotation with vep
-    vep_cmd = 'variant_effect_predictor.pl -i %s -o %s  --no_progress -q --assembly GRCh37 --dir_cache %s --symbol --force_overwrite --offline --pick --vcf --no_stats' % (annotation_file, annotation_vcf, config.ensembl_cache)
-    os.system(vep_cmd)
+    # re-order dataframe according to final list of column names and return
+    annot_input = df[final_colnames]
+    return annot_input
 
-    # format vcf
-    vcf = pyvcf.Reader(open(annotation_vcf, 'r'))
+def base_annotation_annoVar(df):
+    """ TO-DO: docstring
 
-    # define results table df
-    info_fields = re.search('Format: (.+)', vcf.infos['CSQ'].desc).group(1).split('|')
-    header = ['ID', 'CHROM', 'POS', 'REF', 'ALT'] + info_fields
-    annot_results_df = pd.DataFrame(columns=header)
+    Docstring contents """
+    tempdir = "annovar_data"
+    with tempfile.TemporaryDirectory() as tempdir:
+        # make a file in Temporary Directory, write to file
+        to_annovar = os.path.join(tempdir, "to_annovar")
+        df.to_csv(to_annovar, sep='\t', index=False, header=False)
 
-    for record in vcf:
-        snp_info = [record.ID, record.CHROM, record.POS, record.REF, record.ALT]
-        for csq in record.INFO['CSQ']:
-            csq_info = csq.split('|')
-            names = snp_info + csq_info
-            result = pd.Series(names, index=header)
-            annot_results_df = annot_results_df.append(result, ignore_index=True)
-
-    # remove unwanted fields
-    annot_results_df.CHROM = annot_results_df.CHROM.astype(int)
-    annot_results_df.POS = annot_results_df.POS.astype(int)
-    annot_results_df.rename(columns={'CHROM':'chromosome','POS':'position'}, inplace=True)
-    annot_results_df = annot_results_df[['chromosome','position','Consequence','SYMBOL']]
-
-    # merge annotation df with original df
-    annot_results_df = pd.merge(df, annot_results_df)
-
-    # clean up
-    rm_cmd = 'rm %s %s' % (annotation_file, annotation_vcf)
-    os.system(rm_cmd)
-
-    return annot_results_df
-
-def merge_info(df, file):
-    """ TODO: Docstring."""
-    # read information file
-    info = pd.read_table(file, delim_whitespace=True)
-
-    # merge with df
-    df = pd.merge(df, info, how='left', on='rsid')
-
+        # perform annotation with ANNOVAR (give input, standard output)
+        cmd = (f"{config.annovar_dir}/annotate_variation.pl -geneanno "
+           "-dbtype refGene -buildver hg19 "
+           f"{to_annovar} "
+           f"{config.annovar_dir}/humandb/")
+        os.system(cmd)
+        # Output files written to -.variant_function, -.exonic_variant_function
+        # add new columns and get original column names
+        colnames = ['var_effect','genes'] + list(df.columns)
+        # read back in my temp output files as a dataframe with column names
+        df = read.annovar(to_annovar + ".variant_function", to_annovar + ".exonic_variant_function", colnames)
     return df
