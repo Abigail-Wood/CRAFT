@@ -46,10 +46,14 @@ def calc_abf(pval, maf, n, n_controls, n_cases):
 
     # Compute W (no idea what this is either)
     W = (np.log(1.5) / norm.ppf(0.99))**2
-    VW = V + W
-    ABF = 2 * np.log(np.sqrt(VW/V)) ** (- z**2 * W / (2 * VW) )
+    VW = V + W # simplification for ABF equation
+    ABF = 2 * np.log(np.sqrt(VW/V) * np.exp(- z**2 * W / (2 * VW)) ) # 2 ln ABF, see Kass & Raftery 1995
 
     return ABF
+
+## sanity check
+#library(ggplot2)
+#ggplot(data,aes(x=-log10(data$p),y=BF)) + geom_point()
 
 def calc_postprob(data):
     """ Calculate posterior probability for each SNP."""
