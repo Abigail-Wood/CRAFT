@@ -5,9 +5,7 @@
 
 # Old files #
 #############
-abf_corrected.R
-CredSetAnalysis.py
-abf_alt.py
+old/
 
 # CRAFT generated files #
 #########################
@@ -16,11 +14,14 @@ base_annotation.vcf
 base_annotation.vep
 .pyc
 *.craft
+test.*
 
 # Developer notes files #
 #########################
 *_notes
 
-# Required software #
+# Required software or files #
 ###############
 finemap/
+annovar/
+genetic_maps/
