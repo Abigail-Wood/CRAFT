@@ -23,20 +23,8 @@ __Software__ (TO BE VERIFIED)
 
 Source data
 -----------
-
-__Variant Effect Predictor (VEP)__
-IF using on Manchester Computing Cluster...
-
-Get the GRCh37 (release 84) core cache (not included due to size)
-```
-mkdir -p source_data/ensembl/{cache,plugins}
-cd source_data/ensembl/cache/
-wget ftp://ftp.ensembl.org/pub/release-84/variation/VEP/homo_sapiens_vep_84_GRCh37.tar.gz
-tar -zxvf homo_sapiens_vep_84_GRCh37.tar.gz
-cd -
-```
-
 __HapMap recombination map__
+If using on Manchester Computing Cluster, acquire the genetic maps as follows:
 
 ```
 mkdir -p source_data/genetic_map_HapMapII_GRCh37/
@@ -48,9 +36,7 @@ cd -
 
 Test data
 ---------
-Currently two sets of test data: snptest format (chromosome 1, X SNPs) and plink format (chromosome 1, X SNPs) based on associations with psoriatic arthritis (PsA).
-
-We also included ABF validation data.
+Currently two sets of test data: snptest format (chromosome 1, X SNPs) and PLINK format (chromosome 1, X SNPs) based on associations with psoriatic arthritis (PsA).
 
 User input file formats
 -----------------------
