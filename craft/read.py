@@ -28,7 +28,7 @@ def plink(file, bim):
     return df
 
 def plink_noBIM(file):
-    """ Read PLINK2 data into an internal  dataframe. """
+    """ Read PLINK data into an internal  dataframe. """
     # read assoc.logistic
     cols = ['CHR','SNP','BP','A1','P', 'OR','L95','U95']
     df = pd.read_table(file, delim_whitespace=True)[cols]
