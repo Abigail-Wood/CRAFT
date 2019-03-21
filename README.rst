@@ -1,6 +1,10 @@
 CRAFT
 =====
 
+.. image:: http://readthedocs.org/projects/craft/
+        :target: https://craft.readthedocs.io/en/latest/?badge=latest
+        :alt: Documentation Status
+
 PLEASE NOTE: 16/03/2019
 This repository is still in development; our package is not due for release until May 2019.
 
@@ -21,7 +25,7 @@ Requirements
 
 __Software__ (TO BE VERIFIED)
 * Python 3
-    - pandas  
+    - pandas
     - numpy
     - scipy
     - vcf
