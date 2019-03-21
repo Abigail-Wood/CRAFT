@@ -23,18 +23,19 @@ Quick start guide
 3. Install python package at terminal using: ``python -m pip install --index-url https://test.pypi.org/simple/ --no-deps bio-craft``
 4. Install ANNOVAR_
 .. _ANNOVAR: http://annovar.openbioinformatics.org/en/latest/
-5. Install finemapping packages you'd like to run, such as FINEMAP or GCTA-COJO. If none are installed, you can use the default ABF calculation and credible SNP selection.
+5. Download HapMap recombination maps for the correct human genome build (e.g. GRCh37) from the NCBI FTP.
+6. Install supported finemapping packages you'd like to run (FINEMAP or GCTA-COJO). If none are installed, you can use the default ABF calculation and credible SNP selection.
 
-Alternatively,
- you can create a local clone of the CRAFT GitHub repository and
+
+Alternatively, you can create a local clone of the CRAFT GitHub repository and run ``setup.py`` in your terminal.
 
 References
 ------------
 
 
-Source data
------------
-HapMap recombination map
+Manchester computing cluster specific instructions
+--------------------------------------------------
+**HapMap recombination map**
 If using on Manchester Computing Cluster, acquire the genetic maps as follows:
 
 ``
