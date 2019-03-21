@@ -18,10 +18,10 @@ sys.path.insert(0, os.path.abspath('..'))
 import craft.abf
 import craft.annotate
 import craft.config
-import craft.main
-import craft.finemap
 import craft.getSNPs
+import craft.finemap
 import craft.log
+import craft.main
 import craft.read
 
 # -- Project information -----------------------------------------------------

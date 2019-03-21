@@ -17,13 +17,16 @@ Welcome to CRAFT's documentation!
 .. automodule:: craft.config
     :members:
 
-.. automodule:: craft.finemap
-    :members:
-
 .. automodule:: craft.getSNPs
     :members:
 
+.. automodule:: craft.finemap
+    :members:
+
 .. automodule:: craft.log
+        :members:
+
+.. automodule:: craft.main
     :members:
 
 .. automodule:: craft.read
