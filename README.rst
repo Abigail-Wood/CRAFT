@@ -1,9 +1,14 @@
-Credible Refinement and Annotation of Functional Targets (CRAFT)
+CRAFT
 ================================================================
 
 .. image:: http://readthedocs.org/projects/craft/badge/?version=latest
         :target: https://craft.readthedocs.io/en/latest/?badge=latest
         :alt: Documentation Status
+
+Credible Refinement and Annotation of Functional Targets (CRAFT)
+
+* Free, open-source software: MIT license
+* Documentation: https://craft.readthedocs.io
 
 PLEASE NOTE: 16/03/2019
 =======================
@@ -11,21 +16,21 @@ This repository is still in development; our package is not due for release unti
 
 (CRAFT) is a pipeline for the calculation, annotation and visualisation of credible SNP sets. It takes input as p-values from GWAS results. We have implemented this as a Python library, available via PyPI.
 
-Quick-start Guide
+Quick start guide
 -----------------
+1. Install Python 3.6 or later.
+2. Create a virtual environment for package installation (craft and dependencies), using ``venv``.
+3. Install python package at terminal using: ``python -m pip install --index-url https://test.pypi.org/simple/ --no-deps bio-craft``
+4. Install ANNOVAR_
+.. _ANNOVAR: http://annovar.openbioinformatics.org/en/latest/
+5. Install finemapping packages you'd like to run, such as FINEMAP or GCTA-COJO. If none are installed, you can use the default ABF calculation and credible SNP selection.
 
-1. Create a virtual environment for package installation (craft and dependencies), using ``venv``.
-2. Install python package at terminal using: ``python -m pip install --index-url https://test.pypi.org/simple/ --no-deps bio-craft``
+Alternatively,
+ you can create a local clone of the CRAFT GitHub repository and
 
-Requirements
+References
 ------------
 
-*Software*
-Python 3
-* pandas
-* numpy
-* scipy
-* vcf
 
 Source data
 -----------
