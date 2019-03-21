@@ -15,7 +15,7 @@
 import os
 import sys
 sys.path.insert(0, os.path.abspath('..'))
-autodoc_mock_imports = ['vcf']
+autodoc_mock_imports = ['annotate']
 import craft.abf
 import craft.annotate
 import craft.config
