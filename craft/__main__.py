@@ -1,7 +1,9 @@
-# A hack to enable python -m craft --more --switches --go --here
-# lifted from unittest/_main_.py with tweaks.
 import sys
 
+from .main import main
+
+# A hack to enable python -m craft --more --switches --go --here
+# lifted from unittest/_main_.py with tweaks.
 if sys.argv[0].endswith("__main__.py"):
     import os.path
     # change sys.argv[0] to make help message more useful.
@@ -11,8 +13,6 @@ if sys.argv[0].endswith("__main__.py"):
     executable = os.path.basename(sys.executable)
     sys.argv[0] = executable + " -m " + __spec__.parent
     del os
-
-from .cmd import main
 
 if __name__=='__main__':
 	main()

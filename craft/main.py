@@ -99,6 +99,3 @@ def main():
     if options.finemap_tool:
         finemap.open()
     return 0
-
-if __name__=='__main__':
-    main()
