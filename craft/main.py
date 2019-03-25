@@ -83,7 +83,7 @@ def main():
 
     # Calculate ABF and posterior probabilities
     for stat_df in stats:
-        data = gs.get_locus_snps(stat_df, index_df)
+        data = gs.get_locus_snps(stat_df, index_df, options.distance_unit)
     data['ABF'] = data.apply(
         lambda row: abf.calc_abf(pval=row['pvalue'],
                                 maf=row['all_maf'],

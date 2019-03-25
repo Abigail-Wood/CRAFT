@@ -114,7 +114,7 @@ def get_index_snps_bp(df, alpha, distance, mhc):
     index_df.region_end_bp = index_df.region_end_bp.astype(int)
     return index_df
 
-def get_locus_snps(snps, index):
+def get_locus_snps(snps, index, distance_unit):
     """ Create dataframe of SNPs near index SNPs."""
     snps = snps.set_index('position')
     snps['index_rsid'] = ''
@@ -122,7 +122,10 @@ def get_locus_snps(snps, index):
 
     # For each index row, get the SNPs in that locus
     for index, row in index.iterrows():
-        snps_in_locus = snps.loc[row.region_start_cm:row.region_end_cm].copy()
+        if distance_unit == 'cm':
+            snps_in_locus = snps.loc[row.region_start_cm:row.region_end_cm].copy()
+        elif distance_unit == 'bp':
+            snps_in_locus = snps.loc[row.region_start_bp:row.region_end_bp].copy()
         snps_in_locus['index_rsid'] = row.rsid
         locus_snps = locus_snps.append(snps_in_locus)
     locus_snps = locus_snps.reset_index()
