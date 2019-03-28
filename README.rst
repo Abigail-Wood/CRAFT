@@ -18,16 +18,18 @@ This repository is still in development; our package is not due for release unti
 
 Quick start guide
 -----------------
-1. Install Python 3.6 or later.
-2. Create a virtual environment for package installation (craft and dependencies), using ``venv``.
+1. We recommend creating a virtual environment for package installation (craft and dependencies), using ``venv`` or conda.
+2. Install Python 3.6 or later.
+* Alternatively, you can create a local clone of the CRAFT GitHub repository and run ``setup.py`` in your terminal.
 3. Install python package at terminal using: ``python -m pip install --index-url https://test.pypi.org/simple/ --no-deps bio-craft``
-4. Install ANNOVAR_
+4. Install ANNOVAR_ (and Perl if required, which ANNOVAR requires to run)
 .. _ANNOVAR: http://annovar.openbioinformatics.org/en/latest/
-5. Download HapMap recombination maps for the correct human genome build (e.g. GRCh37) from the NCBI FTP.
+You will also need to move the ANNOVAR directory into CRAFT, then download the hg19 database using the shell command:
+``annotate_variation.pl -buildver hg19 -downdb -webfrom annovar refGen -buildver hg19 humandb/ ``
+5. Download HapMap recombination maps for the correct human genome build (e.g. GRCh37) from the NCBI FTP (or use the version distributed by default with CRAFT).
 6. Install supported finemapping packages you'd like to run (FINEMAP or GCTA-COJO). If none are installed, you can use the default ABF calculation and credible SNP selection.
-
-
-Alternatively, you can create a local clone of the CRAFT GitHub repository and run ``setup.py`` in your terminal.
+7. Optional: Change the config file to reflect the locations of the annovar, finemap and genetic maps directories if required.
+8. Optional: Make an empty 'output' folder if you want to run the test scripts.
 
 References
 ------------
