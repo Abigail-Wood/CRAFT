@@ -47,13 +47,9 @@ def calc_abf(pval, maf, n, n_controls, n_cases):
     # Compute W (no idea what this is either)
     W = (np.log(1.5) / norm.ppf(0.99))**2
     VW = V + W # simplification for ABF equation
-    ABF = 2 * np.log(np.sqrt(VW/V) * np.exp(- z**2 * W / (2 * VW)) ) # 2 ln ABF, see Kass & Raftery 1995
+    ABF = np.sqrt(VW/V) * np.exp(- z**2 * W / (2 * VW)) # 2 ln ABF, see Kass & Raftery 1995
 
     return ABF
-
-## sanity check
-#library(ggplot2)
-#ggplot(data,aes(x=-log10(data$p),y=BF)) + geom_point()
 
 def calc_postprob(data):
     """ Calculate posterior probability for each SNP."""
@@ -67,3 +63,24 @@ def calc_postprobsum(data):
     for index, row in data.iterrows():
         data['postprob_cumsum'] = data['postprob'].cumsum()
     return data
+
+def abf(data_dfs, cred_threshold):
+    data_list = []
+    for data in data_dfs:
+        data['ABF'] = data.apply(
+            lambda row: calc_abf(pval=row['pvalue'],
+                                maf=row['all_maf'],
+                                n=row['all_total'],
+                                n_controls=row['controls_total'],
+                                n_cases=row['cases_total']), axis=1)
+        data = data.sort_values('ABF', ascending=False)
+        data = calc_postprob(data)
+        data = calc_postprobsum(data)
+        data = data.sort_values('postprob_cumsum', ascending=False)
+    # Trim credible SNPs based on posterior probability threshold
+        if cred_threshold == '95':
+            data = data[data.postprob_cumsum < 0.95]
+        if cred_threshold =='99':
+            data = data[data.postprob_cumsum < 0.99]
+        data_list.append(data)
+    return data_list
