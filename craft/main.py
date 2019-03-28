@@ -20,7 +20,6 @@ import craft.getSNPs as gs
 # All file reading functions. Each takes a file name and returns a DataFrame.
 readers = {'snptest': read.snptest,
            'plink': read.plink,
-           'plink2': read.plink_noBIM,
            'indexsnps': read.indexsnps,
            'csv': read.csv,
 }
@@ -30,12 +29,12 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         '--file', required=True,
-        help='Input summary statistics file. Use * to include multiple files.')
+        help='Input summary statistics file. Use * to include multiple files (must have the same file type.)')
     parser.add_argument(
         '--type', required = True, choices=readers.keys(),
         help='Define input file type.')
-    # parser.add_argument(
-    #    '--bim', action='store', help='Specify BIM file location (required for plink)')
+    parser.add_argument(
+        '--bim', action='store', help='Specify BIM file location (required for plink)')
     parser.add_argument(
         '--out', required=True,
         help='Output file for table of index SNPs with summary statistics.')
@@ -55,6 +54,9 @@ def parse_args():
         '--mhc', action='store_true',
         help='Include the MHC region. Default = %(default)s.')
     parser.add_argument(
+        '--cred_threshold', choices={'95', '99'}, default='95',
+        help='Choose the cut-off threshold for cumulative posterior probability, when determining credible sets with ABF. Default = %(default)s.')
+    parser.add_argument(
         '--finemap_tool', choices={'caviar','cojo', 'finemap', 'paintor'},
         help='Choose which finemap tool is used. Default = %(default)s.')
     return parser.parse_args()
@@ -62,6 +64,9 @@ def parse_args():
 def main():
     options = parse_args() # Define command-line specified options
     file_names = glob.glob(options.file)
+    if len(file_names) != 1:
+        log.error("Can't (yet) process more than one file.")
+    #TODO: extend to take multiple input files
     if not file_names:
         log.error('Error: file not found!')
     reader = readers[options.type]
@@ -81,21 +86,22 @@ def main():
     # Output index SNPs
     index_df.to_csv(out_file, sep='\t', float_format='%5f', index=False)
 
-    # Calculate ABF and posterior probabilities
+    # Get locus SNPs
     for stat_df in stats:
-        data = gs.get_locus_snps(stat_df, index_df, options.distance_unit)
-    data['ABF'] = data.apply(
-        lambda row: abf.calc_abf(pval=row['pvalue'],
-                                maf=row['all_maf'],
-                                n=row['all_total'],
-                                n_controls=row['controls_total'],
-                                n_cases=row['cases_total']), axis=1)
-    data = data.sort_values('ABF', ascending=False)
+        data_dfs = gs.get_locus_snps(stat_df, index_df, options.distance_unit)
+
+    # Calculate ABF and posterior probabilities
+    data_list = abf.abf(data_dfs, options.cred_threshold)
+    data = pd.concat(data_list)
+
+    # Annotate credible SNP set
     data = annotate.prepare_df_annoVar(data)
     data = annotate.base_annotation_annoVar(data) # Annotate credible SNPs
+
     # Output credible SNP set
     data.to_csv(options.outsf, sep='\t', float_format='%5f', index=False)
 
+    # Finemapping
     if options.finemap_tool:
         finemap.open()
     return 0
