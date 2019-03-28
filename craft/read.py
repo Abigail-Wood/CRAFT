@@ -18,6 +18,8 @@ def plink(file, bim):
     df = pd.read_table(file, delim_whitespace=True)[cols]
     df.rename(columns={'CHR':'chromosome','SNP':'rsid','BP':'position','A1':'alleleA','P':'pvalue', 'SE':'se'}, inplace=True)
 
+    # Add column for all cases, all total, all control, minor allele frequency, beta. Read from BIM file?
+
     # read bim file
     cols = ['chromosome','rsid','cm','position','alleleA','alleleB']
     bdf = pd.read_table(bim, header=None, names=cols)
@@ -25,16 +27,6 @@ def plink(file, bim):
 
     # merge based on rsid
     df = pd.merge(df,bdf, how='inner',on='rsid')
-    return df
-
-def plink_noBIM(file):
-    """ Read PLINK data into an internal  dataframe. """
-    # read assoc.logistic
-    cols = ['CHR','SNP','BP','A1','P', 'OR','L95','U95']
-    df = pd.read_table(file, delim_whitespace=True)[cols]
-    df.rename(columns={'CHR':'chromosome','SNP':'rsid','BP':'position','A1':'alleleA','P':'pvalue'}, inplace=True)
-    df['alleleB'] = df['alleleA']
-    # Add column for all cases, all total, all control, minor allele frequency, beta. Read from BIM file?
     return df
 
 def indexsnps(file):
