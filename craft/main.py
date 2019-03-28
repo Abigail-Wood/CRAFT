@@ -42,7 +42,7 @@ def parse_args():
         '--outsf', required=True,
         help='Output file for summary statistics of the credible set.')
     parser.add_argument(
-        '--alpha', default=5e-5, type=float,
+        '--alpha', default=5e-8, type=float,
         help='P-value threshold for declaring index SNPs. Default = %(default)s.')
     parser.add_argument(
         '--distance_unit', choices=['cm','bp'], default = 'cm',
