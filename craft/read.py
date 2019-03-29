@@ -41,23 +41,11 @@ def plink(file, frq_file):
     df = df[order]
     return df
 
-def indexsnps(file):
-    """ Read in CRAFT output file of index SNPs."""
-    cols = ['chromosome','rsid','alleleA','alleleB','position','all_total', 'cases_total','controls_total','all_maf','pvalue',
-    'beta', 'se','region_start_cm','region_end_cm','region_size_kb']
-    df = pd.read_table(file, sep='\t')
-    return df
-
 def csv(file):
     """Read csv data into an internal dataframe. """
     cols = ['chromosome','rsid','alleleA','alleleB','position','all_total', 'cases_total','controls_total','all_maf','pvalue',
     'beta', 'se']
-    df = pd.read_table(file, sep='\t')
-    return df
-
-
-    df = pd.read_table(file, sep=' ', comment='#')[cols]
-    df.rename(columns={'frequentist_add_pvalue':'pvalue', 'frequentist_add_beta_1':'beta', 'frequentist_add_se_1':'se'}, inplace=True)
+    df = pd.read_csv(file, sep='\t')[cols]
     return df
 
 def maps(source_dir):
