@@ -84,9 +84,6 @@ def main():
         distance = int(options.distance)
         index_dfs = [gs.get_index_snps_bp(d, options.alpha, distance, options.mhc) for d in stats]
     index_df = pd.concat(index_dfs)
-    print(index_df.head())
-    index_df = annotate.prepare_df_annoVar(index_df)
-    index_df = annotate.base_annotation_annoVar(index_df) # Annotate index SNPs
     out_file = options.out
     # Output index SNPs
     index_df.to_csv(out_file, sep='\t', float_format='%5f', index=False)
@@ -106,5 +103,9 @@ def main():
 
     # Output credible SNP set
     data.to_csv(options.outsf, sep='\t', float_format='%5f', index=False)
+
+    # Finemapping
+    if options.finemap_tool:
+        finemap.open()
 
     return 0
