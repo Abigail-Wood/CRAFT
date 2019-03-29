@@ -2,31 +2,43 @@ import glob
 import os
 
 import pandas as pd
+import numpy as np
 
 def snptest(file):
     """ Read snptest data into an internal dataframe. """
     cols = ['chromosome','alleleA','alleleB','rsid','position','all_total', 'cases_total','controls_total','all_maf','frequentist_add_pvalue',
     'frequentist_add_beta_1', 'frequentist_add_se_1']
     df = pd.read_table(file, sep=' ', comment='#')[cols]
-    df.rename(columns={'frequentist_add_pvalue':'pvalue', 'frequentist_add_beta_1':'beta', 'frequentist_add_se_1':'se'}, inplace=True)
+    df.rename(columns={'all_maf':'maf','frequentist_add_pvalue':'pvalue', 'frequentist_add_beta_1':'beta', 'frequentist_add_se_1':'SE'}, inplace=True)
     return df
 
-def plink(file, bim):
-    """ Read PLINK (v1) data into an internal dataframe. """
-    # read assoc. logistic
-    cols = ['CHR','SNP','BP','SE','P','OR','L95','U95']
-    df = pd.read_table(file, delim_whitespace=True)[cols]
-    df.rename(columns={'CHR':'chromosome','SNP':'rsid','BP':'position','A1':'alleleA','P':'pvalue', 'SE':'se'}, inplace=True)
+def plink(file, frq_file):
+    """ Read plink (.assoc.logistic) data into an internal dataframe. """
+    # read .assoc.logistic file
+    cols = ['CHR','A1','SNP','BP','P','SE','OR']
+    df = pd.read_csv(file, sep='\s+')[cols]
+    df.rename(columns={'CHR':'chromosome','SNP':'rsid','BP':'position','A1':'alleleA','P':'pvalue'}, inplace=True)
+    # For finemap, we need the beta coefficient. For a binary logistic regression, ln(OR) = beta coefficient.
+    for index, row in df.iterrows():
+        df['beta'] = np.log(df['OR'])
+    df.drop(columns='OR')
 
-    # Add column for all cases, all total, all control, minor allele frequency, beta. Read from BIM file?
-
-    # read bim file
-    cols = ['chromosome','rsid','cm','position','alleleA','alleleB']
-    bdf = pd.read_table(bim, header=None, names=cols)
-    bdf = bdf[['rsid','alleleA','alleleB']]
-
+    # read .frq.cc file
+    cols = ['CHR','SNP','A2','MAF_A','MAF_U','NCHROBS_A', 'NCHROBS_U']
+    frq_df = pd.read_csv(frq_file, sep='\s+')[cols]
+    frq_df.rename(columns={'CHR':'chromosome','SNP':'rsid','A2':'alleleB','MAF_A':'maf','NCHROBS_A':'cases_total','NCHROBS_U':'controls_total'}, inplace=True)
+    # if chromosome column has more than 1 number, read chromosome number from .assoc.logistic file and only include rows with that value.
+    chromosomes = df.chromosome.unique()
+    frq_df = frq_df[frq_df['chromosome'].isin(chromosomes)]
+    frq_df = frq_df.drop("chromosome", axis=1)
+    # create an all_total column
+    for index, row in frq_df.iterrows():
+        frq_df['all_total'] = frq_df['cases_total'] + frq_df['controls_total']
     # merge based on rsid
-    df = pd.merge(df,bdf, how='inner',on='rsid')
+    df = pd.merge(df, frq_df, how='inner',on='rsid')
+    # Rearrange column order after merge to match SNPtest format
+    order = ['chromosome','alleleA','alleleB','rsid','position','all_total', 'cases_total','controls_total','maf','pvalue', 'beta', 'SE']
+    df = df[order]
     return df
 
 def indexsnps(file):
