@@ -1,0 +1,2 @@
+CHR                      SNP         BP   A1       TEST    NMISS         OR       SE      L95      U95         STAT            P
+  1               rs61733845    1118275    T        ADD    10883      1.069  0.08433   0.9063    1.261       0.7938       0.00000079
