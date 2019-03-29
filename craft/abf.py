@@ -69,7 +69,7 @@ def abf(data_dfs, cred_threshold):
     for data in data_dfs:
         data['ABF'] = data.apply(
             lambda row: calc_abf(pval=row['pvalue'],
-                                maf=row['all_maf'],
+                                maf=row['maf'],
                                 n=row['all_total'],
                                 n_controls=row['controls_total'],
                                 n_cases=row['cases_total']), axis=1)
