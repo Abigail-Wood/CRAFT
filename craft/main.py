@@ -20,7 +20,6 @@ import craft.getSNPs as gs
 # All file reading functions. Each takes a file name and returns a DataFrame.
 readers = {'snptest': read.snptest,
            'plink': read.plink,
-           'indexsnps': read.indexsnps,
            'csv': read.csv,
 }
 
