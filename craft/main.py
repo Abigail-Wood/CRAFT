@@ -9,11 +9,12 @@ import glob
 
 import pandas as pd
 
-from craft import config
-from craft import read
 from craft import abf
 from craft import annotate
+from craft import config
+from craft import finemap
 from craft import log
+from craft import read
 import craft.getSNPs as gs
 
 # All file reading functions. Each takes a file name and returns a DataFrame.
