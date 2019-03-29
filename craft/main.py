@@ -13,7 +13,6 @@ from craft import config
 from craft import read
 from craft import abf
 from craft import annotate
-from craft import finemap
 from craft import log
 import craft.getSNPs as gs
 
@@ -34,7 +33,9 @@ def parse_args():
         '--type', required = True, choices=readers.keys(),
         help='Define input file type.')
     parser.add_argument(
-        '--bim', action='store', help='Specify BIM file location (required for plink)')
+        '--bim', action='store', help='Specify .bim file location (required for plink). Use * to include multiple files (must be in the same order as matching plink files)')
+    parser.add_argument(
+        '--frq', action='store', help='Specify .frq file location (required for plink)')
     parser.add_argument(
         '--out', required=True,
         help='Output file for table of index SNPs with summary statistics.')
@@ -69,8 +70,11 @@ def main():
     #TODO: extend to take multiple input files
     if not file_names:
         log.error('Error: file not found!')
-    reader = readers[options.type]
-    stats = [reader(n) for n in file_names] # Read input summary statistics
+    if options.type == 'plink': # dirty hack
+        stats = [read.plink(n, options.frq) for n in file_names]
+    else:
+        reader = readers[options.type]
+        stats = [reader(n) for n in file_names] # Read input summary statistics
 
     if options.distance_unit == 'cm': # Get index SNPs using cm as distance
         distance = float(options.distance)
@@ -80,11 +84,13 @@ def main():
         distance = int(options.distance)
         index_dfs = [gs.get_index_snps_bp(d, options.alpha, distance, options.mhc) for d in stats]
     index_df = pd.concat(index_dfs)
+    print(index_df.head())
     index_df = annotate.prepare_df_annoVar(index_df)
     index_df = annotate.base_annotation_annoVar(index_df) # Annotate index SNPs
     out_file = options.out
     # Output index SNPs
     index_df.to_csv(out_file, sep='\t', float_format='%5f', index=False)
+    print(index_df.head())
 
     # Get locus SNPs
     for stat_df in stats:
@@ -101,7 +107,4 @@ def main():
     # Output credible SNP set
     data.to_csv(options.outsf, sep='\t', float_format='%5f', index=False)
 
-    # Finemapping
-    if options.finemap_tool:
-        finemap.open()
     return 0
