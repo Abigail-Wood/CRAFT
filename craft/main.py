@@ -12,7 +12,6 @@ import pandas as pd
 from craft import abf
 from craft import annotate
 from craft import config
-from craft import finemap
 from craft import log
 from craft import read
 import craft.getSNPs as gs
@@ -70,24 +69,27 @@ def main():
     #TODO: extend to take multiple input files
     if not file_names:
         log.error('Error: file not found!')
+
+    # Read input summary statistics
     if options.type == 'plink': # dirty hack
         stats = [read.plink(n, options.frq) for n in file_names]
     else:
         reader = readers[options.type]
-        stats = [reader(n) for n in file_names] # Read input summary statistics
+        stats = [reader(n) for n in file_names]
 
-    if options.distance_unit == 'cm': # Get index SNPs using cm as distance
+    # Get index SNPs
+    if options.distance_unit == 'cm': # using cM as a distance unit
         distance = float(options.distance)
         maps = read.maps(config.genetic_map_dir)
         index_dfs = [gs.get_index_snps_cm(d, options.alpha, distance, options.mhc, maps) for d in stats]
-    if options.distance_unit == 'bp': # Get index SNPs using bp as distance
+    if options.distance_unit == 'bp': # using bp as a distance unit
         distance = int(options.distance)
         index_dfs = [gs.get_index_snps_bp(d, options.alpha, distance, options.mhc) for d in stats]
     index_df = pd.concat(index_dfs)
     out_file = options.out
+
     # Output index SNPs
     index_df.to_csv(out_file, sep='\t', float_format='%5f', index=False)
-    print(index_df.head())
 
     # Get locus SNPs
     for stat_df in stats:
@@ -104,8 +106,6 @@ def main():
     # Output credible SNP set
     data.to_csv(options.outsf, sep='\t', float_format='%5f', index=False)
 
-    # Finemapping
-    if options.finemap_tool:
-        finemap.open()
+    # If finemap, use data_dfs (locus SNPs) as input for dataset, creating LD file, and master file.
 
     return 0
