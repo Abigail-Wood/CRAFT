@@ -106,6 +106,8 @@ def main():
     # Output credible SNP set
     data.to_csv(options.outsf, sep='\t', float_format='%5f', index=False)
 
-    # If finemap, use data_dfs (locus SNPs) as input for dataset, creating LD file, and master file.
+    # Finemapping, if specified on command-line.
+    if options.finemap_tool:
+        finemap.finemap(data_dfs, index_df)
 
     return 0
