@@ -49,7 +49,7 @@ def finemap(data_dfs, index_df):
         ld_store_executable = os.path.join(config.ldstore_dir, "ldstore")
 
         # need to take in index_df region definitions.
-         index_count = 0
+        index_count = 0
 
         for data in data_dfs:
             # set the PLINK basename based on chromosome in file
