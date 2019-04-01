@@ -24,7 +24,6 @@ test.*
 
 # Required software or files #
 ##############################
-finemap/
 annovar/
 genetic_maps/
 
