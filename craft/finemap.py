@@ -45,7 +45,7 @@ def finemap(data_dfs, index_df):
     with tempfile.TemporaryDirectory() as tempdir:
 
         # make an empty master file
-        master = pd.DataFrame(index=index, columns=['z','ld','snp','config','cred','log', 'n_samples'])
+        master = pd.DataFrame(columns=['z','ld','snp','config','cred','log', 'n_samples'])
 
         ld_store_executable = os.path.join(config.ldstore_dir, "ldstore")
 
