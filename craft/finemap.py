@@ -103,4 +103,4 @@ def finemap(data_dfs, index_df):
 
         # move finemap result files out of temp_dir into output
 
-return 0
+    return 0
