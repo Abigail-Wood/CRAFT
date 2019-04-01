@@ -55,7 +55,7 @@ def finemap(data_dfs, index_df):
         for data in data_dfs:
             # set the PLINK basename based on chromosome in file
             chr = data.chromosome.unique()
-            index = data.index_rsid.unique()
+            index = index_df.at[index_count, 'rsid']
 
             # set filenames in tempdir with index SNP rsid (as unique identifier for input and output files)
             z_file = os.path.join(tempdir, index + ".z")
