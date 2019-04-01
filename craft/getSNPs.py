@@ -119,7 +119,7 @@ def get_locus_snps(snps, index, distance_unit):
     snps = snps.set_index('position')
     snps['index_rsid'] = ''
     locus_snps = pd.DataFrame(columns=snps.columns,index=pd.Index([],name='position'))
-    locus_snps_dfs = []
+    data_dfs = []
 
     # For each index row, get the SNPs in that locus
     for index, row in index.iterrows():
@@ -130,7 +130,9 @@ def get_locus_snps(snps, index, distance_unit):
         snps_in_locus['index_rsid'] = row.rsid
         locus_snps = locus_snps.append(snps_in_locus)
         locus_snps = locus_snps.reset_index()
-        locus_snps_dfs.append(locus_snps)
-        locus_snps = pd.DataFrame(columns=snps.columns,index=pd.Index([],name='position'))
         # instead of appending snps_in_locus to locus_snps dataframe, add the dataframe to a list.
-    return locus_snps_dfs
+        data_dfs.append(locus_snps)
+        # reset locus SNPs dataframe at the end of the loop.
+        locus_snps = pd.DataFrame(columns=snps.columns,index=pd.Index([],name='position'))
+
+    return data_dfs
