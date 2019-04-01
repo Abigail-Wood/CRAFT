@@ -108,7 +108,7 @@ def main():
     data.to_csv(options.outsf, sep='\t', float_format='%5f', index=False)
 
     # Finemapping, if specified on command-line.
-    if options.finemap_tool:
+    if options.finemap_tool == "finemap":
         finemap.finemap(data_dfs, index_df)
 
     return 0
