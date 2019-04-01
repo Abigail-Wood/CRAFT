@@ -9,7 +9,7 @@ def snptest(file):
     cols = ['chromosome','alleleA','alleleB','rsid','position','all_total', 'cases_total','controls_total','all_maf','frequentist_add_pvalue',
     'frequentist_add_beta_1', 'frequentist_add_se_1']
     df = pd.read_table(file, sep=' ', comment='#')[cols]
-    df.rename(columns={'all_maf':'maf','frequentist_add_pvalue':'pvalue', 'frequentist_add_beta_1':'beta', 'frequentist_add_se_1':'SE'}, inplace=True)
+    df.rename(columns={'all_maf':'maf','frequentist_add_pvalue':'pvalue', 'frequentist_add_beta_1':'beta', 'frequentist_add_se_1':'SE','alleleA':'allele1','alleleB':'allele2'}, inplace=True)
     return df
 
 def plink(file, frq_file):
@@ -17,7 +17,7 @@ def plink(file, frq_file):
     # read .assoc.logistic file
     cols = ['CHR','A1','SNP','BP','P','SE','OR']
     df = pd.read_csv(file, sep='\s+')[cols]
-    df.rename(columns={'CHR':'chromosome','SNP':'rsid','BP':'position','A1':'alleleA','P':'pvalue'}, inplace=True)
+    df.rename(columns={'CHR':'chromosome','SNP':'rsid','BP':'position','A1':'allele1','P':'pvalue'}, inplace=True)
     # For finemap, we need the beta coefficient. For a binary logistic regression, ln(OR) = beta coefficient.
     for index, row in df.iterrows():
         df['beta'] = np.log(df['OR'])
@@ -26,7 +26,7 @@ def plink(file, frq_file):
     # read .frq.cc file
     cols = ['CHR','SNP','A2','MAF_A','MAF_U','NCHROBS_A', 'NCHROBS_U']
     frq_df = pd.read_csv(frq_file, sep='\s+')[cols]
-    frq_df.rename(columns={'CHR':'chromosome','SNP':'rsid','A2':'alleleB','MAF_A':'maf','NCHROBS_A':'cases_total','NCHROBS_U':'controls_total'}, inplace=True)
+    frq_df.rename(columns={'CHR':'chromosome','SNP':'rsid','A2':'allele2','MAF_A':'maf','NCHROBS_A':'cases_total','NCHROBS_U':'controls_total'}, inplace=True)
     # if chromosome column has more than 1 number, read chromosome number from .assoc.logistic file and only include rows with that value.
     chromosomes = df.chromosome.unique()
     frq_df = frq_df[frq_df['chromosome'].isin(chromosomes)]
@@ -37,7 +37,7 @@ def plink(file, frq_file):
     # merge based on rsid
     df = pd.merge(df, frq_df, how='inner',on='rsid')
     # Rearrange column order after merge to match SNPtest format
-    order = ['chromosome','alleleA','alleleB','rsid','position','all_total', 'cases_total','controls_total','maf','pvalue', 'beta', 'SE']
+    order = ['chromosome','allele1','allele2','rsid','position','all_total', 'cases_total','controls_total','maf','pvalue', 'beta', 'SE']
     df = df[order]
     return df
 

@@ -13,7 +13,7 @@ def prepare_df_annoVar(df):
     Docstring contents """
     # make a list of all column names; position repeats twice for input
     df['position2'] = df['position']
-    wanted = ['chromosome', 'position', 'position2','alleleA', 'alleleB']
+    wanted = ['chromosome', 'position', 'position2','allele1', 'allele2']
     colnames = df.columns
 
     # list comprehensions to identify first 5 column names
@@ -27,7 +27,6 @@ def base_annotation_annoVar(df):
     """ TO-DO: docstring
 
     Docstring contents """
-    tempdir = "annovar_data"
     with tempfile.TemporaryDirectory() as tempdir:
         # make a file in Temporary Directory, write to file
         to_annovar = os.path.join(tempdir, "to_annovar")
