@@ -14,6 +14,7 @@ from craft import annotate
 from craft import config
 from craft import log
 from craft import read
+from craft import finemap
 import craft.getSNPs as gs
 
 # All file reading functions. Each takes a file name and returns a DataFrame.
@@ -57,7 +58,7 @@ def parse_args():
         '--cred_threshold', choices={'95', '99'}, default='95',
         help='Choose the cut-off threshold for cumulative posterior probability, when determining credible sets with ABF. Default = %(default)s.')
     parser.add_argument(
-        '--finemap_tool', choices={'caviar','cojo', 'finemap', 'paintor'},
+        '--finemap_tool', choices={'cojo', 'finemap', 'paintor'},
         help='Choose which finemap tool is used. Default = %(default)s.')
     return parser.parse_args()
 
