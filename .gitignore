@@ -25,7 +25,6 @@ test.*
 # Required software or files #
 ##############################
 annovar/
-genetic_maps/
 
 # Package distribution files #
 ##############################
