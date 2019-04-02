@@ -48,19 +48,20 @@ def finemap(data_dfs, index_df):
         master = pd.DataFrame(columns=['z','ld','snp','config','cred','log', 'n_samples'])
 
         ld_store_executable = os.path.join(config.ldstore_dir, "ldstore")
+        master_file = os.path.join(tempdir, "master_file")
 
         # need to take in index_df region definitions.
         index_count = 0
 
         for data in data_dfs:
             # set the PLINK basename based on chromosome in file
-            chr = data.chromosome.unique()
+            chr = index_df.at[index_count, 'chromosome']
             index = index_df.at[index_count, 'rsid']
 
             # set filenames in tempdir with index SNP rsid (as unique identifier for input and output files)
             z_file = os.path.join(tempdir, index + ".z")
             variant_file = os.path.join(tempdir, index + "_variant.txt")
-            plink_basename = os.path.join(config.plink_basename_dir, f"chr{chr}_input")
+            plink_basename = os.path.join(config.plink_basename_dir, f"chr{chr}_ld_panel")
             bcor_file = os.path.join(tempdir, index + ".bcor")
             ld_file = os.path.join(tempdir, index + ".ld")
             snp_file = os.path.join("output", index + ".snp")
@@ -70,7 +71,7 @@ def finemap(data_dfs, index_df):
 
             # define region size [need to give index df as well and identify matching row based on rsid]
             region_start_cm = index_df.at[index_count, 'region_start_cm']
-            region_end_cm = index_df.at[index_count, 'region_start_cm']
+            region_end_cm = index_df.at[index_count, 'region_end_cm']
 
             # make a Z file
             order = ['rsid','chromosome','position','allele1','allele2','maf', 'beta', 'SE']
@@ -78,28 +79,29 @@ def finemap(data_dfs, index_df):
             data.to_csv(z_file, sep=' ', index=False, header=False)
 
             # order of SNPs in LD file must correspond to order in Z file
-            variants = data['rsid']
-            variants.to_csv(variant_file, sep='/n', index=False, header=False)
+            variants = data[['rsid','position','chromosome','allele1','allele2']]
+            print(variants.head())
+            variants.to_csv(variant_file, sep=' ', index=False, header=['RSID','position','chromosome','A_allele','B_allele'])
 
             # make an LD file (bcor)
-            cmd = (ld_store_executable + "--bplink" + plink_basename + f"--bcor {bcor_file} --incl-range {region_start_cm}-{region_end_cm} --n-threads 1")
+            cmd = (ld_store_executable + " --bplink " + plink_basename + f" --bcor {bcor_file} --incl-range {region_start_cm}-{region_end_cm} --n-threads 1")
             os.system(cmd)
 
             # make an LD file matrix for our rsids in locus (matrix)
-            cmd = (ld_store_executable + f"--bcor {bcor_file}_1 --matrix {ld_file} --incl-variants {variant_file}")
+            cmd = (ld_store_executable + f" --bcor {bcor_file}_1 --matrix {ld_file} --incl-variants {variant_file}")
             os.system(cmd)
 
             # append row to master file
-            z_file, ld_file, snp_file, config_file, cred_file, log_file, data.all_total.unique()
+            z_file, ld_file, snp_file, config_file, cred_file, log_file, index_df.at[index_count, 'rsid']
 
             # increment index count to bring in new region definition.
             index_count+=1
 
         # Write completed master file out for use
-        master.to_csv((os.path.join(tempdir, "master_file")), sep=' ', index=False, header=False)
+        master.to_csv(master_file, sep=' ', index=False, header=False)
 
         # run finemap (tell it data files are in temp directory)
-        cmd = (f"{config.finemap_dir}" + "/finemap_v1.3.1_x86_64" + f"--sss --in-files {temp_dir}")
+        cmd = (f"{config.finemap_dir}" + "/finemap_v1.3.1_x86_64" + f" --sss --in-files {master_file}")
         os.system(cmd)
 
         # move finemap result files out of temp_dir into output
