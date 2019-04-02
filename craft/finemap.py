@@ -43,12 +43,14 @@ def finemap(data_dfs, index_df):
 
     """
     with tempfile.TemporaryDirectory() as tempdir:
-
+        tempdir = "output"
         # make an empty master file
         master = pd.DataFrame(columns=['z','ld','snp','config','cred','log', 'n_samples'])
 
         ld_store_executable = os.path.join(config.ldstore_dir, "ldstore")
         master_file = os.path.join(tempdir, "master_file")
+        master = open(master_file, "w")
+        master.write("z;ld;snp;config;cred;log;n_samples\n")
 
         # need to take in index_df region definitions.
         index_count = 0
@@ -74,13 +76,12 @@ def finemap(data_dfs, index_df):
             region_end_cm = index_df.at[index_count, 'region_end_cm']
 
             # make a Z file
-            order = ['rsid','chromosome','position','allele1','allele2','maf', 'beta', 'SE']
+            order = ['rsid','chromosome','position','allele1','allele2','maf', 'beta', 'se']
             data = data[order]
-            data.to_csv(z_file, sep=' ', index=False, header=False)
+            data.to_csv(z_file, sep=' ', index=False)
 
             # order of SNPs in LD file must correspond to order in Z file
             variants = data[['rsid','position','chromosome','allele1','allele2']]
-            print(variants.head())
             variants.to_csv(variant_file, sep=' ', index=False, header=['RSID','position','chromosome','A_allele','B_allele'])
 
             # make an LD file (bcor)
@@ -92,13 +93,13 @@ def finemap(data_dfs, index_df):
             os.system(cmd)
 
             # append row to master file
-            z_file, ld_file, snp_file, config_file, cred_file, log_file, index_df.at[index_count, 'rsid']
+            master.write(f"{z_file};{ld_file};{snp_file};{config_file};{cred_file};{log_file};{index_df.at[index_count, 'all_total']}\n")
 
             # increment index count to bring in new region definition.
             index_count+=1
 
         # Write completed master file out for use
-        master.to_csv(master_file, sep=' ', index=False, header=False)
+        master.close()
 
         # run finemap (tell it data files are in temp directory)
         cmd = (f"{config.finemap_dir}" + "/finemap_v1.3.1_x86_64" + f" --sss --in-files {master_file}")
