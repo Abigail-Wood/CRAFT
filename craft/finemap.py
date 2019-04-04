@@ -11,10 +11,10 @@ def finemap(data_dfs, index_df):
 
     Finemap(v1.3.1) was created by Christian Brenner (http://www.christianbenner.com/) and uses summary statistics for finemapping.
 
-    INPUT:
-    1) Master file
+    **INPUT**
+    1. Master file
 
-    2) Z file (dataset, uncompressed)
+    2. Z file (dataset, uncompressed)
     The dataset.z file is a space-delimited text file and contains the GWAS summary statistics one SNP per line. It contains the mandatory column names in the following order.
 
         `rsid` contains the SNP identifiers. The identifier can be a rsID number or a combination of chromosome name and genomic position (e.g. XXX:yyy)
@@ -33,12 +33,12 @@ def finemap(data_dfs, index_df):
 
         `se` contains the standard errors of effect sizes as given by GWAS software
 
-    3) LD file
+    3. LD file
         Generated using LDstore, assuming PLINK input files (.bed, .bim, .fam).
 
     Other input options (support for BGEN input data, optional K file) are described at Christian Brenner's website and are not used here.
 
-    OUTPUT:
+    **OUTPUT**
 
 
     """
