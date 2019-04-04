@@ -25,6 +25,8 @@ test.*
 # Required software or files #
 ##############################
 annovar/
+caviarBF/
+PAINTOR_V3.0/
 
 # Package distribution files #
 ##############################
