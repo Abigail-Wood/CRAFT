@@ -110,5 +110,6 @@ def main():
     # Finemapping, if specified on command-line.
     if options.finemap_tool == "finemap":
         finemap.finemap(data_dfs, index_df)
-
+    elif options.finemap_tool == "paintor"
+        paintor.paintor(data_dfs, index_df)
     return 0
