@@ -19,8 +19,7 @@ This repository is still in development; our package is not due for release unti
 Quick start guide
 -----------------
 1. We recommend creating a virtual environment for package installation (craft and dependencies), using ``venv`` or conda.
-2. Install Python 3.6 or later.
-* Alternatively, you can create a local clone of the CRAFT GitHub repository and run ``setup.py`` in your terminal.
+2. Install Python 3.6 or later. Alternatively, you can create a local clone of the CRAFT GitHub repository and run ``setup.py`` in your terminal.
 3. Install python package at terminal using: ``python -m pip install --index-url https://test.pypi.org/simple/ --no-deps bio-craft``
 4. Install ANNOVAR_ (and Perl if required, which ANNOVAR requires to run)
 .. _ANNOVAR: http://annovar.openbioinformatics.org/en/latest/
@@ -34,25 +33,11 @@ You will also need to move the ANNOVAR directory into CRAFT, then download the h
 References
 ------------
 
-
-Manchester computing cluster specific instructions
---------------------------------------------------
-**HapMap recombination map**
-If using on Manchester Computing Cluster, acquire the genetic maps as follows:
-
-``
-mkdir -p source_data/genetic_map_HapMapII_GRCh37/
-cd source_data/genetic_map_HapMapII_GRCh37/
-wget ftp://ftp.ncbi.nlm.nih.gov/hapmap/recombination/2011-01_phaseII_B37/genetic_map_HapMapII_GRCh37.tar.gz
-tar -zxvf genetic_map_HapMapII_GRCh37.tar.gz
-cd -
-``
-
 Test data
 ---------
 Currently two sets of test data: snptest format (chromosome 1, X SNPs) and PLINK format (chromosome 1, X SNPs) based on associations with psoriatic arthritis (PsA).
 
-User input file formats
+Input file formats
 -----------------------
 
 GWAS summary statistics
