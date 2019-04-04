@@ -58,12 +58,21 @@ def maps(source_dir):
         maps[chromosome] = map_file
     return maps
 
-def annovar(file , file_exonic, colnames):
-    """ Read annovar output into an internal dataframe. """
+def annovar(file, file_exonic, colnames):
+    """ Read ANNOVAR output files into an internal dataframe.
+
+    Gene annotation with ANNOVAR returns two different output files (variant_function and exonic_variant_function).
+
+    Where exonic SNPs exist, we merge the additional data of exonic variant function, and genes + transcript ID + protein-level change into the dataframe based on matching rsids.
+    """
     df = pd.DataFrame(columns=colnames)
     if os.path.getsize(file) != 0:
         df = df.append(pd.read_csv(file, sep='\t', names = colnames))
     if os.path.getsize(file_exonic) != 0:
+        df = df.append(pd.read_csv(file, sep='\t', names = colnames))
         df2 = pd.read_csv(file_exonic, sep='\t', names = colnames, usecols=range(1,(len(colnames) + 1)))
-        df = df.append(df2)
+        df2 = df2.filter(items=['var_effect','genes','rsid'], axis=1)
+        df2.rename(columns={'var_effect':'exonic_variant_function', 'genes':'genes_transcriptID'}, inplace=True)
+        df2 = df2.set_index('rsid')
+        df = pd.merge(df, df2, how='left',on='rsid')
     return df
