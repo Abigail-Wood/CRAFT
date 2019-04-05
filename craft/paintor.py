@@ -62,7 +62,7 @@ def paintor(data_dfs, index_df):
 
             # Make an annotation file (all rows 0 to show 'no annotation')
             # Annotation library (large, 6.7GB download) is available from PAINTOR and may be implemented in future versions of this pipeline
-            annotation_df = pd.DataFrame(index=data.index,columns='dummy_annotation')
+            annotation_df = pd.DataFrame(index=range(len(data.index)), columns='dummy_annotation')
             annotation_df['dummy_annotation'] = 0
             annotation_df.to_csv(annotation_file, sep=' ', header=['dummy_annotation'])
 
