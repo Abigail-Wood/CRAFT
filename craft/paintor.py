@@ -18,7 +18,7 @@ def paintor(data_dfs, index_df):
 
         ld_store_executable = os.path.join(config.ldstore_dir, "ldstore")
         input_file = os.path.join(tempdir, "input.file")
-        input_file = open(input_file, "w")
+        input_file = open("input_file", "w")
 
         # need to take in index_df region definitions.
         index_count = 0
