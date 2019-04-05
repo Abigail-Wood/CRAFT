@@ -15,6 +15,7 @@ from craft import config
 from craft import log
 from craft import read
 from craft import finemap
+from craft import paintor
 import craft.getSNPs as gs
 
 # All file reading functions. Each takes a file name and returns a DataFrame.

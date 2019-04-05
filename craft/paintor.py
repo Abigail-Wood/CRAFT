@@ -18,8 +18,8 @@ def paintor(data_dfs, index_df):
         tempdir = "output/paintor_input/"
 
         ld_store_executable = os.path.join(config.ldstore_dir, "ldstore")
-        input_file = os.path.join(tempdir, "input.file")
-        input_file = open("input_file", "w")
+        input_file_loc = os.path.join(tempdir, "input_file")
+        input_file = open(f"{input_file_loc}", "w")
 
         # need to take in index_df region definitions.
         index_count = 0
@@ -34,7 +34,7 @@ def paintor(data_dfs, index_df):
             variant_file = os.path.join(tempdir, index + "_variant.txt")
             plink_basename = os.path.join(config.plink_basename_dir, f"chr{chr}_ld_panel")
             bcor_file = os.path.join(tempdir, index + ".bcor")
-            ld_file = os.path.join("output/paintor_output", index + ".ld")
+            ld_file = os.path.join(tempdir, index + ".ld")
             annotation_file = os.path.join(tempdir, index + ".annotations")
 
             # define region size [need to give index df as well and identify matching row based on rsid]
@@ -47,7 +47,7 @@ def paintor(data_dfs, index_df):
             # Z-score = beta / se (the Wald statistic)
             data['ZSCORE'] = data['beta']/data['se']
             data = data.drop(['beta','se'], axis=1)
-            data.to_csv(locus_file, sep=' ', header=['CHR','POS','RSID','ZSCORE','ALLELE1','ALLELE2'])
+            data.to_csv(locus_file, sep=' ', index=False, header=['CHR','POS','RSID','ALLELE1','ALLELE2','ZSCORE'])
 
             # order of SNPs in LD file must correspond to order in Z file
             variants = data[['rsid','position','chromosome','allele1','allele2']]
@@ -63,8 +63,8 @@ def paintor(data_dfs, index_df):
 
             # Make an annotation file (all rows 0 to show 'no annotation')
             # Annotation library (large, 6.7GB download) is available from PAINTOR and may be implemented in future versions of this pipeline
-            annotation_df = pd.DataFrame(0, index = np.arange(len(data.index)), columns='dummy_annotation'
-            annotation_df.to_csv(annotation_file, sep=' ', header=['dummy_annotation'])
+            annotation_df = pd.DataFrame(1, index = np.arange(len(data.index)), columns=['dummy_annotation'])
+            annotation_df.to_csv(annotation_file, sep=' ',index=False, header=['dummy_annotation'])
 
             # append row to input file
             input_file.write(f"{index_df.at[index_count, 'rsid']}\n")
@@ -77,7 +77,7 @@ def paintor(data_dfs, index_df):
 
         # run paintor (tell it data files are in temp directory)
         # may wish to add command line option for specifying max causal and enumerate [number of causals]
-        cmd = (f"{config.paintor_dir}" + "PAINTOR " + f" --input {input.file} -Zhead ZSCORE -LDname ld -in {tempdir} -out output/paintor_output - max_causal 2 -enumerate 2")
+        cmd = (f"{config.paintor_dir}" + "/PAINTOR " + f" -input {input_file_loc} -Zhead ZSCORE -LDname ld -in {tempdir} -out {tempdir} -max_causal 2 -enumerate 2 -annotations dummy_annotation")
 
         os.system(cmd)
 
