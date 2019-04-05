@@ -8,7 +8,7 @@ def snptest(file):
     """ Read snptest data into an internal dataframe. """
     cols = ['chromosome','alleleA','alleleB','rsid','position','all_total', 'cases_total','controls_total','all_maf','frequentist_add_pvalue',
     'frequentist_add_beta_1', 'frequentist_add_se_1']
-    df = pd.read_table(file, sep=' ', comment='#')[cols]
+    df = pd.read_csv(file, sep=' ', comment='#')[cols]
     df.rename(columns={'all_maf':'maf','frequentist_add_pvalue':'pvalue', 'frequentist_add_beta_1':'beta', 'frequentist_add_se_1':'se','alleleA':'allele1','alleleB':'allele2'}, inplace=True)
     return df
 
