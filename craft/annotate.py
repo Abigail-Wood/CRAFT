@@ -8,7 +8,7 @@ import craft.config as config
 import craft.read as read
 
 def prepare_df_annoVar(df):
-    """ TO-DO: docstring
+    """TO-DO: docstring
 
     Docstring contents """
     # make a list of all column names; position repeats twice for input
@@ -24,7 +24,7 @@ def prepare_df_annoVar(df):
     return annot_input
 
 def base_annotation_annoVar(df):
-    """ TO-DO: docstring
+    """TO-DO: docstring
 
     Docstring contents """
     with tempfile.TemporaryDirectory() as tempdir:
