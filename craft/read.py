@@ -69,7 +69,6 @@ def annovar(file, file_exonic, colnames):
     if os.path.getsize(file) != 0:
         df = df.append(pd.read_csv(file, sep='\t', names = colnames))
     if os.path.getsize(file_exonic) != 0:
-        df = df.append(pd.read_csv(file, sep='\t', names = colnames))
         df2 = pd.read_csv(file_exonic, sep='\t', names = colnames, usecols=range(1,(len(colnames) + 1)))
         df2 = df2.filter(items=['var_effect','genes','rsid'], axis=1)
         df2.rename(columns={'var_effect':'exonic_variant_function', 'genes':'genes_transcriptID'}, inplace=True)
