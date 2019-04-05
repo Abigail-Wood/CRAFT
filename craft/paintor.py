@@ -25,7 +25,7 @@ def paintor(data_dfs, index_df):
             variant_file = os.path.join(tempdir, index + "_variant.txt")
             plink_basename = os.path.join(config.plink_basename_dir, f"chr{chr}_ld_panel")
             bcor_file = os.path.join(tempdir, index + ".bcor")
-            ld_file = os.path.join(tempdir, index + ".ld")
+            ld_file = os.path.join("output/paintor_output", index + ".ld")
             annotation_file = os.path.join(tempdir, index + ".annotations")
 
             # define region size [need to give index df as well and identify matching row based on rsid]
