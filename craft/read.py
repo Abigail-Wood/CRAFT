@@ -53,7 +53,7 @@ def maps(source_dir):
     map_file_list = glob.glob(source_dir + '/*chr[0-9]*.txt')
     maps = {}
     for file in map_file_list:
-        map_file = pd.read_table(file)
+        map_file = pd.read_csv(file, sep='\t')
         chromosome = map_file['Chromosome'].ix[0].strip('chr')
         maps[chromosome] = map_file
     return maps
