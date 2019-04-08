@@ -34,8 +34,6 @@ def parse_args():
         '--type', required = True, choices=readers.keys(),
         help='Define input file type.')
     parser.add_argument(
-        '--bim', action='store', help='Specify .bim file location (required for plink). Use * to include multiple files (must be in the same order as matching plink files)')
-    parser.add_argument(
         '--frq', action='store', help='Specify .frq file location (required for plink)')
     parser.add_argument(
         '--out', required=True,
@@ -66,7 +64,7 @@ def parse_args():
 def main():
     options = parse_args() # Define command-line specified options
     file_names = glob.glob(options.file)
-    if len(file_names) != 1:
+    if len(file_names) > 1:
         log.error("Can't (yet) process more than one file.")
     #TODO: extend to take multiple input files
     if not file_names:
@@ -97,20 +95,20 @@ def main():
     for stat_df in stats:
         data_dfs = gs.get_locus_snps(stat_df, index_df, options.distance_unit)
 
-    # Calculate ABF and posterior probabilities
-    data_list = abf.abf(data_dfs, options.cred_threshold)
-    data = pd.concat(data_list)
+        # Calculate ABF and posterior probabilities
+        data_list = abf.abf(data_dfs, options.cred_threshold)
+        data = pd.concat(data_list)
 
-    # Annotate credible SNP set
-    data = annotate.prepare_df_annoVar(data)
-    data = annotate.base_annotation_annoVar(data) # Annotate credible SNPs
+        # Annotate credible SNP set
+        data = annotate.prepare_df_annoVar(data)
+        data = annotate.base_annotation_annoVar(data) # Annotate credible SNPs
 
-    # Output credible SNP set
-    data.to_csv(options.outsf, sep='\t', float_format='%5f', index=False)
+        # Output credible SNP set
+        data.to_csv(options.outsf, sep='\t', float_format='%5f', index=False)
 
-    # Finemapping, if specified on command-line.
-    if options.finemap_tool == "finemap":
-        finemap.finemap(data_dfs, index_df)
-    elif options.finemap_tool == "paintor":
-        paintor.paintor(data_dfs, index_df)
+        # Finemapping, if specified on command-line.
+        if options.finemap_tool == "finemap":
+            finemap.finemap(data_dfs, index_df)
+        elif options.finemap_tool == "paintor":
+            paintor.paintor(data_dfs, index_df)
     return 0
