@@ -58,42 +58,45 @@ def calc_abf(pval, maf, n, n_controls, n_cases):
     ABF = np.sqrt(VW/V) * np.exp(- z**2 * W / (2 * VW))
 
     # Kass & Raftery (1995): 2 ln ABF allows comparison / rough interpretation of ABF meaning.
+    # This version is not taken because it is not compatible
     ln_2_ABF = -2 * np.log(ABF)
 
-    return ln_2_ABF
+    return ABF
 
 def calc_postprob(data):
-    """ Calculate posterior probability for each SNP."""
-    # posterior odds = prior odds * ABF
-    # Null hypothesis: risk of major vs minor allele disease correlation is the same (whichever allele you have)
-    sum_ABF = data['ln_2_ABF'].sum()
+    """ Calculate posterior probability for each SNP.
+
+    Method taken from Maller et al. 2012 'Bayesian refinement of association signals for 14 loci in 3 common diseases.' (supplementary note).
+    This assumes there is 1 causal SNP in the region, and that the prior probability is that any SNP in the region is equally likely to be that causal SNP.
+    """
+    sum_ABF = data['ABF'].sum()
     for index, row in data.iterrows():
-        data['postprob'] = data['ln_2_ABF'] / sum_ABF
+        data['pp'] = data['ABF'] / sum_ABF
     return data
 
 def calc_postprobsum(data):
     """ Calc cumulative sum of the posterior probabilities."""
     for index, row in data.iterrows():
-        data['postprob_cumsum'] = data['postprob'].cumsum()
+        data['cpp'] = data['pp'].cumsum()
     return data
 
 def abf(data_dfs, cred_threshold):
     data_list = []
     for data in data_dfs:
-        data['ln_2_ABF'] = data.apply(
+        data['ABF'] = data.apply(
             lambda row: calc_abf(pval=row['pvalue'],
                                 maf=row['maf'],
                                 n=row['all_total'],
                                 n_controls=row['controls_total'],
                                 n_cases=row['cases_total']), axis=1)
-        data = data.sort_values('ln_2_ABF', ascending=False)
+        data = data.sort_values('ABF', ascending=False)
         data = calc_postprob(data)
         data = calc_postprobsum(data)
-        data = data.sort_values('postprob_cumsum', ascending=False)
+        data = data.sort_values('pp', ascending=False)
     # Trim credible SNPs based on posterior probability threshold
         if cred_threshold == '95':
-            data = data[data.postprob_cumsum < 0.95]
+            data = data[data.cpp < 0.95]
         if cred_threshold =='99':
-            data = data[data.postprob_cumsum < 0.99]
+            data = data[data.cpp < 0.99]
         data_list.append(data)
     return data_list
