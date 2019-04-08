@@ -92,10 +92,11 @@ def main():
 
     # Get locus SNPs
     for stat_df in stats:
-        data_dfs = gs.get_locus_snps(stat_df, index_df, options.distance_unit)
+        locus_dfs = gs.get_locus_snps(stat_df, index_df, options.distance_unit)
 
         # Calculate ABF and posterior probabilities
-        data_list = abf.abf(data_dfs, options.cred_threshold)
+        data_list = abf.abf(locus_dfs, options.cred_threshold)
+        # returns a list of dataframes all with abf calculations
         data = pd.concat(data_list)
 
         # Annotate credible SNP set
@@ -107,7 +108,7 @@ def main():
 
         # Finemapping, if specified on command-line.
         if options.finemap_tool == "finemap":
-            finemap.finemap(data_dfs, index_df)
+            finemap.finemap(locus_dfs, index_df)
         elif options.finemap_tool == "paintor":
-            paintor.paintor(data_dfs, index_df)
+            paintor.paintor(locus_dfs, index_df)
     return 0
