@@ -98,7 +98,7 @@ def main():
         data_dfs = gs.get_locus_snps(stat_df, index_df, options.distance_unit)
 
     # Calculate ABF and posterior probabilities
-    data_list = abf.calc_abf(data_dfs, options.cred_threshold)
+    data_list = abf.abf(data_dfs, options.cred_threshold)
     data = pd.concat(data_list)
 
     # Annotate credible SNP set
