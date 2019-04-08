@@ -48,6 +48,7 @@ Output
 Test data
 ---------
 Currently we include two sets of test data, both for binary traits:
+
 1. SNPTEST summary statistics from PsA patients (chromosome 1)
 2. PLINK .assoc.logistic and .frq.cc summary statistic files from PsA patients typed using Immunochip (chromosome 1)
 We have not (yet) tested this pipeline using data for quantitative traits.
