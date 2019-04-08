@@ -58,12 +58,14 @@ def calc_abf(pval, maf, n, n_controls, n_cases):
     ABF = np.sqrt(VW/V) * np.exp(- z**2 * W / (2 * VW))
 
     # Kass & Raftery (1995): 2 ln ABF allows comparison / rough interpretation of ABF meaning.
-    # ln_2_ABF = 2 * np.log(np.sqrt(VW/V) * np.exp(- z**2 * W / (2 * VW)))
+    ln_2_ABF = -2 * np.log(ABF)
 
-    return ABF
+    return ln_2_ABF
 
 def calc_postprob(data):
     """ Calculate posterior probability for each SNP."""
+    # posterior odds = prior odds * ABF
+    # Null hypothesis: risk of major vs minor allele disease correlation is the same (whichever allele you have)
     sum_ABF = data['ABF'].sum()
     for index, row in data.iterrows():
         data['postprob'] = data['ABF'] / sum_ABF
