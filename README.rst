@@ -62,13 +62,16 @@ References
 
 Approximate Bayes Factor (ABF)
 CRAFT uses a Python reimplemented version of the abf.R function written by [Chris Wallace](http://chr1swallace.github.io/) for the calculation of credible SNPs.
+
 1. Jon Wakefield (2008) Bayes factors for genome-wide association studies: comparison with P-values. Genet Epidemiol DOI: 10.1002/gepi.20359
 2. http://www.nature.com/ncomms/2015/150205/ncomms7046/abs/ncomms7046.html](Bowes et. al (2015) Dense genotyping of immune-related susceptibility loci reveals new insights into the genetics of psoriatic arthritis).
 
 ANNOVAR
+
 1. Wang, K., Li, M. & Hakonarson, H. ANNOVAR: functional annotation of genetic variants from high-throughput sequencing data. Nucleic Acids Res. 38, e164 (2010).
 
 CAVIARBF (C++ version, v0.1.4.1)
+
 1. https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4512539/
 
 FINEMAP(v1.3)
@@ -78,6 +81,7 @@ FINEMAP(v1.3)
 3. FINEMAP: Efficient variable selection using summary data from genome-wide association studies. Bioinformatics 32, 1493-1501 (2016).
 
 PAINTOR (v3.0)
+
 1. Kichaev et al. (PLOS Genetics, 2014)
 2. Kichaev et al. (American Journal of Human Genetics, 2015)
 3. Kichaev et al. (Bioinformatics, 2016).
