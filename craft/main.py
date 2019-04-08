@@ -64,14 +64,13 @@ def parse_args():
 def main():
     options = parse_args() # Define command-line specified options
     file_names = glob.glob(options.file)
-    if len(file_names) > 1:
-        log.error("Can't (yet) process more than one file.")
-    #TODO: extend to take multiple input files
     if not file_names:
         log.error('Error: file not found!')
 
     # Read input summary statistics
     if options.type == 'plink': # dirty hack
+        if not options.frq:
+            log.error('Error: .frq.cc file not found!')
         stats = [read.plink(n, options.frq) for n in file_names]
     else:
         reader = readers[options.type]

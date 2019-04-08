@@ -66,9 +66,9 @@ def calc_postprob(data):
     """ Calculate posterior probability for each SNP."""
     # posterior odds = prior odds * ABF
     # Null hypothesis: risk of major vs minor allele disease correlation is the same (whichever allele you have)
-    sum_ABF = data['ABF'].sum()
+    sum_ABF = data['ln_2_ABF'].sum()
     for index, row in data.iterrows():
-        data['postprob'] = data['ABF'] / sum_ABF
+        data['postprob'] = data['ln_2_ABF'] / sum_ABF
     return data
 
 def calc_postprobsum(data):
@@ -80,20 +80,20 @@ def calc_postprobsum(data):
 def abf(data_dfs, cred_threshold):
     data_list = []
     for data in data_dfs:
-        data['ABF'] = data.apply(
+        data['ln_2_ABF'] = data.apply(
             lambda row: calc_abf(pval=row['pvalue'],
                                 maf=row['maf'],
                                 n=row['all_total'],
                                 n_controls=row['controls_total'],
                                 n_cases=row['cases_total']), axis=1)
-        data = data.sort_values('ABF', ascending=False)
+        data = data.sort_values('ln_2_ABF', ascending=False)
         data = calc_postprob(data)
         data = calc_postprobsum(data)
         data = data.sort_values('postprob_cumsum', ascending=False)
     # Trim credible SNPs based on posterior probability threshold
-    #    if cred_threshold == '95':
-    #        data = data[data.postprob_cumsum < 0.95]
-    #    if cred_threshold =='99':
-    #        data = data[data.postprob_cumsum < 0.99]
+        if cred_threshold == '95':
+            data = data[data.postprob_cumsum < 0.95]
+        if cred_threshold =='99':
+            data = data[data.postprob_cumsum < 0.99]
         data_list.append(data)
     return data_list
