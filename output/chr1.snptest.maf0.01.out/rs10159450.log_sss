@@ -1,0 +1,60 @@
+
+|--------------------------------------|
+| Welcome to FINEMAP v1.3.1            |
+|                                      |
+| (c) 2015-2018 University of Helsinki |
+|                                      |
+| Help :                               |
+| - ./finemap --help                   |
+| - www.finemap.me                     |
+| - www.christianbenner.com            |
+|                                      |
+| Contact:                             |
+| - christian.benner@helsinki.fi       |
+| - matti.pirinen@helsinki.fi          |
+|--------------------------------------|
+
+--------
+SETTINGS
+--------
+- dataset         : all
+- corr-config     : 0.95
+- n-causal-snps   : 5
+- n-configs-top   : 50000
+- n-convergence   : 1000
+- n-iterations    : 100000
+- prior-k0        : 0
+- prior-std       : 0.05 
+- prob-tol        : 0.001
+
+------------
+FINE-MAPPING (3/4)
+------------
+- GWAS summary stats               : /tmp/tmptge174sl/rs10159450.z
+- SNP correlations                 : output//chr1.snptest.maf0.01.out/rs10159450.ld
+- Causal SNP stats                 : output//chr1.snptest.maf0.01.out/rs10159450.snp
+- Causal configurations            : output//chr1.snptest.maf0.01.out/rs10159450.config
+- Credible sets                    : output//chr1.snptest.maf0.01.out/rs10159450.cred
+- Log file                         : output//chr1.snptest.maf0.01.out/rs10159450.log_sss
+
+- Number of GWAS samples           : 5611
+- Number of SNPs                   : 905
+- Prior-Pr(# of causal SNPs is k)  : 
+  (0 -> 0)
+   1 -> 0.583
+   2 -> 0.291
+   3 -> 0.097
+   4 -> 0.0242
+   5 -> 0.00482
+- 2997940 configurations evaluated (1.582/100%) : converged after 1582 iterations
+- Regional SNP heritability        : 0.00761 (SD: 0.00166 ; 95% CI: [0.00472,0.0112])
+- Log10-BF of >= one causal SNP    : 6.22
+- Post-Pr(# of causal SNPs is k)   : 
+  (0 -> 0)
+   1 -> 3.97e-05
+   2 -> 7.41e-05
+   3 -> 0.145
+   4 -> 0.261
+   5 -> 0.594
+- Run time                         : 0 hours, 0 minutes, 30 seconds
+
