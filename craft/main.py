@@ -36,11 +36,8 @@ def parse_args():
     parser.add_argument(
         '--frq', action='store', help='Specify .frq file location (required for plink)')
     parser.add_argument(
-        '--out', required=True,
-        help='Output file for table of index SNPs with summary statistics.')
-    parser.add_argument(
-        '--outsf', required=True,
-        help='Output file for summary statistics of the credible set.')
+        '--outdir', required=True, default='output',
+        help='Specify output directory for all results - index set, credible set, ld file, finemapping output. Default = %(default)s.')
     parser.add_argument(
         '--alpha', default=5e-8, type=float,
         help='P-value threshold for declaring index SNPs. Default = %(default)s.')
@@ -66,45 +63,43 @@ def main():
     file_names = glob.glob(options.file)
     if not file_names:
         log.error('Error: file not found!')
+    for file in file_names:
+        file_name = os.path.basename(os.path.normpath(file))
+        file_dir = f"{options.outdir}/{file_name}"
+        os.mkdir(file_dir)
+        # Read input summary statistics
+        if options.type == 'plink': # dirty hack
+            if not options.frq:
+                log.error('Error: .frq.cc file not found!')
+            stats = read.plink(file, options.frq)
+        else:
+            reader = readers[options.type]
+            stats = reader(file)
+        # Get index SNPs
+        if options.distance_unit == 'cm': # using cM as a distance unit
+            distance = float(options.distance)
+            maps = read.maps(config.genetic_map_dir)
+            index_df = [gs.get_index_snps_cm(stats, options.alpha, distance, options.mhc, maps)]
+        if options.distance_unit == 'bp': # using bp as a distance unit
+            distance = int(options.distance)
+            index_df = [gs.get_index_snps_bp(stats, options.alpha, distance, options.mhc)]
+        index_df = pd.concat(index_df)
 
-    # Read input summary statistics
-    if options.type == 'plink': # dirty hack
-        if not options.frq:
-            log.error('Error: .frq.cc file not found!')
-        stats = [read.plink(n, options.frq) for n in file_names]
-    else:
-        reader = readers[options.type]
-        stats = [reader(n) for n in file_names]
+        # Output index SNPs
+        index_df.to_csv(f"{os.path.join(file_dir, file_name)}.index", sep='\t', float_format='%5f', index=False)
 
-    # Get index SNPs
-    if options.distance_unit == 'cm': # using cM as a distance unit
-        distance = float(options.distance)
-        maps = read.maps(config.genetic_map_dir)
-        index_dfs = [gs.get_index_snps_cm(d, options.alpha, distance, options.mhc, maps) for d in stats]
-    if options.distance_unit == 'bp': # using bp as a distance unit
-        distance = int(options.distance)
-        index_dfs = [gs.get_index_snps_bp(d, options.alpha, distance, options.mhc) for d in stats]
-    index_df = pd.concat(index_dfs)
-    out_file = options.out
-
-    # Output index SNPs
-    index_df.to_csv(out_file, sep='\t', float_format='%5f', index=False)
-
-    # Get locus SNPs
-    for stat_df in stats:
-        locus_dfs = gs.get_locus_snps(stat_df, index_df, options.distance_unit)
+        # Get locus SNPs
+        locus_dfs = gs.get_locus_snps(stats, index_df, options.distance_unit)
 
         # Calculate ABF and posterior probabilities
         data_list = abf.abf(locus_dfs, options.cred_threshold)
-        # returns a list of dataframes all with abf calculations
-        data = pd.concat(data_list)
 
         # Annotate credible SNP set
-        data = annotate.prepare_df_annoVar(data)
-        data = annotate.base_annotation_annoVar(data) # Annotate credible SNPs
-
-        # Output credible SNP set
-        data.to_csv(options.outsf, sep='\t', float_format='%5f', index=False)
+        for data in data_list:
+            data = annotate.prepare_df_annoVar(data)
+            data = annotate.base_annotation_annoVar(data)
+            # Output credible SNP set
+            data.to_csv(f"{os.path.join(file_dir, data.index_rsid.unique()[0])}.abf.cred", sep='\t', float_format='%5f', index=False)
 
         # Finemapping, if specified on command-line.
         if options.finemap_tool == "finemap":
