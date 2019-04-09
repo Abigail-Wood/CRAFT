@@ -103,7 +103,7 @@ def main():
 
         # Finemapping, if specified on command-line.
         if options.finemap_tool == "finemap":
-            finemap.finemap(locus_dfs, index_df)
+            finemap.finemap(locus_dfs, index_df, file_dir)
         elif options.finemap_tool == "paintor":
             paintor.paintor(locus_dfs, index_df)
     return 0

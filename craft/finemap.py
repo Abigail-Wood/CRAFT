@@ -6,7 +6,7 @@ import pandas as pd
 
 import craft.config as config
 
-def finemap(data_dfs, index_df):
+def finemap(data_dfs, index_df, file_dir):
     """ Runs Finemap and LDStore on each SNP locus.
 
     Finemap(v1.3.1) was created by Christian Brenner (http://www.christianbenner.com/) and uses summary statistics for finemapping.
@@ -43,7 +43,6 @@ def finemap(data_dfs, index_df):
 
     """
     with tempfile.TemporaryDirectory() as tempdir:
-        tempdir = "output"
         # make an empty master file
         master = pd.DataFrame(columns=['z','ld','snp','config','cred','log', 'n_samples'])
 
@@ -65,11 +64,11 @@ def finemap(data_dfs, index_df):
             variant_file = os.path.join(tempdir, index + "_variant.txt")
             plink_basename = os.path.join(config.plink_basename_dir, f"chr{chr}_ld_panel")
             bcor_file = os.path.join(tempdir, index + ".bcor")
-            ld_file = os.path.join(tempdir, index + ".ld")
-            snp_file = os.path.join("output", index + ".snp")
-            config_file = os.path.join("output", index + ".config")
-            cred_file = os.path.join("output", index + ".cred")
-            log_file = os.path.join("output", index + ".log")
+            ld_file = os.path.join(file_dir, index + ".ld")
+            snp_file = os.path.join(file_dir, index + ".snp")
+            config_file = os.path.join(file_dir, index + ".config")
+            cred_file = os.path.join(file_dir, index + ".cred")
+            log_file = os.path.join(file_dir, index + ".log")
 
             # define region size [need to give index df as well and identify matching row based on rsid]
             region_start_cm = index_df.at[index_count, 'region_start_cm']
