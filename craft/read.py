@@ -26,7 +26,8 @@ def plink(file, frq_file):
     # read .frq.cc file
     cols = ['CHR','SNP','A2','MAF_A','MAF_U','NCHROBS_A', 'NCHROBS_U']
     frq_df = pd.read_csv(frq_file, sep='\s+')[cols]
-    frq_df.rename(columns={'CHR':'chromosome','SNP':'rsid','A2':'allele2','MAF_A':'maf','NCHROBS_A':'cases_total','NCHROBS_U':'controls_total'}, inplace=True)
+    # takes MAF_U as reflects 'unaffected' population controls
+    frq_df.rename(columns={'CHR':'chromosome','SNP':'rsid','A2':'allele2','MAF_U':'maf','NCHROBS_A':'cases_total','NCHROBS_U':'controls_total'}, inplace=True)
     # if chromosome column has more than 1 number, read chromosome number from .assoc.logistic file and only include rows with that value.
     chromosomes = df.chromosome.unique()
     frq_df = frq_df[frq_df['chromosome'].isin(chromosomes)]
