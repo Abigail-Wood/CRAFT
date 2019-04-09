@@ -59,7 +59,7 @@ def calc_abf(pval, maf, n, n_controls, n_cases):
 
     # Kass & Raftery (1995): 2 ln ABF allows comparison / rough interpretation of ABF meaning.
     # This version is not taken because it is not compatible
-    ln_2_ABF = -2 * np.log(ABF)
+    #ln_2_ABF = -2 * np.log(ABF)
 
     return ABF
 
@@ -74,12 +74,6 @@ def calc_postprob(data):
         data['pp'] = data['ABF'] / sum_ABF
     return data
 
-def calc_postprobsum(data):
-    """ Calc cumulative sum of the posterior probabilities."""
-    for index, row in data.iterrows():
-        data['cpp'] = data['pp'].cumsum()
-    return data
-
 def abf(data_dfs, cred_threshold):
     data_list = []
     for data in data_dfs:
@@ -89,14 +83,14 @@ def abf(data_dfs, cred_threshold):
                                 n=row['all_total'],
                                 n_controls=row['controls_total'],
                                 n_cases=row['cases_total']), axis=1)
-        data = data.sort_values('ABF', ascending=False)
         data = calc_postprob(data)
-        data = calc_postprobsum(data)
         data = data.sort_values('pp', ascending=False)
+        data['cpp'] = data.pp.cumsum()
     # Trim credible SNPs based on posterior probability threshold
         if cred_threshold == '95':
-            data = data[data.cpp < 0.95]
+            count = sum(data.cpp < 0.95)
         if cred_threshold =='99':
-            data = data[data.cpp < 0.99]
+            count = sum(data.cpp < 0.99)
+        data = data.head(count+1)
         data_list.append(data)
     return data_list
