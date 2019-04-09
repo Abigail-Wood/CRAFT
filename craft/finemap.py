@@ -101,7 +101,7 @@ def finemap(data_dfs, index_df, file_dir):
         master.close()
 
         # run finemap (tell it data files are in temp directory)
-        cmd = (f"{config.finemap_dir}" + "/finemap_v1.3.1_x86_64" + f" --sss --in-files {master_file}")
+        cmd = (f"{config.finemap_dir}" + "/finemap_v1.3.1_x86_64" + f" --sss --in-files {master_file} --log")
         os.system(cmd)
 
         # move finemap result files out of temp_dir into output
