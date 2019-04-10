@@ -79,5 +79,5 @@ def annovar(file, file_exonic, colnames):
 
 def finemap_cred(cred_file):
     """Read FINEMAP .cred file into an internal dataframe."""
-    df = pd.read_csv(cred_file, sep=' ')
+    cred_snps = pd.read_csv(cred_file, sep=' ')
     return cred_snps
