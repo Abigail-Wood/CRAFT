@@ -16,6 +16,7 @@ from craft import log
 from craft import read
 from craft import finemap
 from craft import paintor
+from craft import visualise
 import craft.getSNPs as gs
 
 # All file reading functions. Each takes a file name and returns a DataFrame.
@@ -101,20 +102,24 @@ def main():
             # Output credible SNP set
             data.to_csv(f"{os.path.join(file_dir, data.index_rsid.unique()[0])}.abf.cred", sep='\t', float_format='%5f', index=False)
 
+        # Visualise ABF outputs
+        # Graph 1
+        # Graph 2
+
         # Finemapping, if specified on command-line.
         if options.finemap_tool == "finemap":
             finemap.finemap(locus_dfs, index_df, file_dir)
             # Annotate finemap cred file results
-            cred_snps = read.finemap_cred(cred_file)
-            cred_snps_annotation = finemap_annotation_annoVar(cred_snps)
+            for index in index_df:
+                cred_file = os.path.join(file_dir, index + ".cred")
+                cred_snps = read.finemap_cred(cred_file)
+                cred_snps_annotation = finemap_annotation_annoVar(cred_snps)
             # merge .cred file and cred_snps dataframe on rsid
-            print(cred_snps_annotation.head())
+                print(cred_snps_annotation.head())
+            # Visualise
+            # Graph 2
+            # Graph 3
         elif options.finemap_tool == "paintor":
             paintor.paintor(locus_dfs, index_df)
-
-        # Visualise - rough sources of data
-        # Graph 1
-        # Graph 2
-        # Graph 3
 
     return 0

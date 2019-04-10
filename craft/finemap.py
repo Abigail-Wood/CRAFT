@@ -106,4 +106,4 @@ def finemap(data_dfs, index_df, file_dir):
 
         # move finemap result files out of temp_dir into output
 
-    return cred_file
+    return 0
