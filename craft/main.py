@@ -110,8 +110,8 @@ def main():
         if options.finemap_tool == "finemap":
             finemap.finemap(locus_dfs, index_df, file_dir)
             # Annotate finemap cred file results
-            for index in index_df:
-                cred_file = os.path.join(file_dir, index + ".cred")
+            for index, row in index_df.iterrows():
+                cred_file = os.path.join(file_dir, index_df['rsid'] + ".cred")
                 cred_snps = read.finemap_cred(cred_file)
                 cred_snps_annotation = finemap_annotation_annoVar(cred_snps)
             # merge .cred file and cred_snps dataframe on rsid
