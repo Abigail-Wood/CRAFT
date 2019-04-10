@@ -76,3 +76,8 @@ def annovar(file, file_exonic, colnames):
         df2 = df2.set_index('rsid')
         df = pd.merge(df, df2, how='left',on='rsid')
     return df
+
+def finemap_cred(cred_file):
+    """Read FINEMAP .cred file into an internal dataframe."""
+    df = pd.read_csv(cred_file, sep=' ')
+    return cred_snps

@@ -97,13 +97,24 @@ def main():
         # Annotate credible SNP set
         for data in data_list:
             data = annotate.prepare_df_annoVar(data)
-            data = annotate.base_annotation_annoVar(data)
+            data = annotate.annotation_annoVar(data)
             # Output credible SNP set
             data.to_csv(f"{os.path.join(file_dir, data.index_rsid.unique()[0])}.abf.cred", sep='\t', float_format='%5f', index=False)
 
         # Finemapping, if specified on command-line.
         if options.finemap_tool == "finemap":
             finemap.finemap(locus_dfs, index_df, file_dir)
+            # Annotate finemap cred file results
+            cred_snps = read.finemap_cred(cred_file)
+            cred_snps_annotation = finemap_annotation_annoVar(cred_snps)
+            # merge .cred file and cred_snps dataframe on rsid
+            print(cred_snps_annotation.head())
         elif options.finemap_tool == "paintor":
             paintor.paintor(locus_dfs, index_df)
+
+        # Visualise - rough sources of data
+        # Graph 1
+        # Graph 2
+        # Graph 3
+
     return 0
