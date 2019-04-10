@@ -17,8 +17,7 @@ def prepare_df_annoVar(df):
     colnames = df.columns
 
     # list comprehensions to identify first 5 column names
-    final_colnames = [col for col in wanted if col in colnames]
-                    + [col for col in colnames if col not in wanted]
+    final_colnames = [col for col in wanted if col in colnames] + [col for col in colnames if col not in wanted]
 
     # re-order dataframe according to final list of column names and return
     annot_input = df[final_colnames]
