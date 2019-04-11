@@ -12,36 +12,16 @@ Welcome to CRAFT's documentation!
    :caption: Module Documentation:
 
    craft.annotate
-
-.. automodule:: craft.abf
-    :members:
-
-.. automodule:: craft.caviarbf
-    :members:
-
-.. automodule:: craft.config
-    :members:
-
-.. automodule:: craft.finemap
-    :members:
-
-.. automodule:: craft.getSNPs
-    :members:
-
-.. automodule:: craft.log
-    :members:
-
-.. automodule:: craft.main
-    :members:
-
-.. automodule:: craft.paintor
-    :members:
-
-.. automodule:: craft.read
-    :members:
-
-.. automodule:: craft.visualise
-    :members:
+   craft.abf
+   craft.caviarbf
+   craft.config
+   craft.finemap
+   craft.getSNPs
+   craft.log
+   craft.main
+   craft.paintor
+   craft.read
+   craft.visualise
 
 Indices and tables
 ==================
