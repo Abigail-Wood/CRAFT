@@ -114,7 +114,7 @@ def main():
             for row in index_df:
                 cred_file = os.path.join(file_dir, index_df.at[index_count, 'rsid'] + ".cred")
                 cred_snps = read.finemap_cred(cred_file)
-                cred_snps_annotation = finemap_annotation_annoVar(cred_snps)
+                cred_snps_annotation = annotate.finemap_annotation_annoVar(cred_snps)
                 # merge .cred file and cred_snps dataframe on rsid
                 print(cred_snps_annotation.head())
                 # increment index count to select next index
