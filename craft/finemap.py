@@ -6,7 +6,7 @@ import pandas as pd
 
 import craft.config as config
 
-def finemap(data_dfs, index_df, file_dir, options.n_causal_snps):
+def finemap(data_dfs, index_df, file_dir, n_causal_snps):
     """ Runs Finemap and LDStore on each SNP locus.
 
     Finemap(v1.3.1) was created by Christian Brenner (http://www.christianbenner.com/) and uses summary statistics for finemapping.
@@ -101,10 +101,10 @@ def finemap(data_dfs, index_df, file_dir, options.n_causal_snps):
         master.close()
 
         # run finemap (tell it data files are in temp directory)
-        if options.n_causal_snps:
-            cmd = (f"{config.finemap_dir}" + "/finemap_v1.3.1_x86_64" + f" --sss --in-files {master_file} --log  --n_causal_snps {options.n_causal_snps}")
+        if n_causal_snps:
+            cmd = (f"{config.finemap_dir}" + "/finemap_v1.3.1_x86_64" + f" --sss --in-files {master_file} --log  --n_causal_snps {n_causal_snps}")
             os.system(cmd)
-        else
+        else:
             cmd = (f"{config.finemap_dir}" + "/finemap_v1.3.1_x86_64" + f" --sss --in-files {master_file} --log")
             os.system(cmd)
     return 0

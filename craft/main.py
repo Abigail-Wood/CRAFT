@@ -111,7 +111,7 @@ def main():
 
         # Finemapping, if specified on command-line.
         if options.finemap_tool == "finemap":
-            finemap.finemap(locus_dfs, index_df, file_dir)
+            finemap.finemap(locus_dfs, index_df, file_dir, options.n_causal_snps)
             # Annotate finemap cred file results
             index_count = 0
             for row in index_df:
