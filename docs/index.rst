@@ -1,17 +1,12 @@
 Welcome to CRAFT's documentation!
-=================================
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+===================================
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
+   readme
+   
 .. automodule:: craft
     :members:
 
@@ -47,3 +42,10 @@ Indices and tables
 
 .. automodule:: craft.visualise
     :members:
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`

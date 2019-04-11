@@ -23,7 +23,9 @@ import craft.getSNPs
 import craft.finemap
 import craft.log
 import craft.main
+import craft.paintor
 import craft.read
+import craft.visualise
 
 # -- Project information -----------------------------------------------------
 
