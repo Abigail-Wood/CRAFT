@@ -1,0 +1,2 @@
+.. automodule:: craft.annotate
+    :members:

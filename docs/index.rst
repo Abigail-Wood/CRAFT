@@ -6,14 +6,16 @@ Welcome to CRAFT's documentation!
    :caption: Contents:
 
    readme
-   
-.. automodule:: craft
-    :members:
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Module Documentation:
+
+   scvi.dataset
+   scvi.inference
+   scvi.models
 
 .. automodule:: craft.abf
-    :members:
-
-.. automodule:: craft.annotate
     :members:
 
 .. automodule:: craft.caviarbf
