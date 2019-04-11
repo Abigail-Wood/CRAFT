@@ -59,7 +59,7 @@ def parse_args():
         help='Choose which finemapping tool is used. Default = %(default)s.')
     parser.add_argument(
         '--n_causal_snps', type=int,
-        help='For use with FINEMAP, specify the maximum number of causal snps considered in modelling.Default (set by FINEMAP) = 5')
+        help='For use with FINEMAP, specify the maximum number of causal snps considered in modelling. Default (set by FINEMAP) = 5')
     return parser.parse_args()
 
 def main():
@@ -112,16 +112,6 @@ def main():
         # Finemapping, if specified on command-line.
         if options.finemap_tool == "finemap":
             finemap.finemap(locus_dfs, index_df, file_dir, options.n_causal_snps)
-            # Annotate finemap cred file results
-            index_count = 0
-            for row in index_df:
-                cred_file = os.path.join(file_dir, index_df.at[index_count, 'rsid'] + ".cred")
-                cred_snps = read.finemap_cred(cred_file)
-                cred_snps_annotation = annotate.finemap_annotation_annoVar(cred_snps)
-                # merge .cred file and cred_snps dataframe on rsid
-                print(cred_snps_annotation.head())
-                # increment index count to select next index
-                index_count+=1
             # Visualise
             # Graph 2
             # Graph 3
