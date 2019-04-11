@@ -1,6 +1,13 @@
 Welcome to CRAFT's documentation!
 =================================
 
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
@@ -14,28 +21,29 @@ Welcome to CRAFT's documentation!
 .. automodule:: craft.annotate
     :members:
 
-.. automodule:: craft.config
+.. automodule:: craft.caviarbf
     :members:
 
-.. automodule:: craft.getSNPs
+.. automodule:: craft.config
     :members:
 
 .. automodule:: craft.finemap
     :members:
 
+.. automodule:: craft.getSNPs
+    :members:
+
 .. automodule:: craft.log
-        :members:
+    :members:
 
 .. automodule:: craft.main
+    :members:
+
+.. automodule:: craft.paintor
     :members:
 
 .. automodule:: craft.read
     :members:
 
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+.. automodule:: craft.visualise
+    :members:
