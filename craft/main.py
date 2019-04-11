@@ -112,6 +112,16 @@ def main():
         # Finemapping, if specified on command-line.
         if options.finemap_tool == "finemap":
             finemap.finemap(locus_dfs, index_df, file_dir, options.n_causal_snps)
+            # Annotate finemap cred file results
+            index_count = 0
+            for row in index_df:
+                cred_file = os.path.join(file_dir, index_df.at[index_count, 'rsid'] + ".cred")
+                cred_snps = read.finemap_cred(cred_file)
+                cred_snps = finemap_annotation_annoVar(cred_snps, locus_dfs[index_count])
+                print(cred_snps.head())
+                # merge .cred file and cred_snps dataframe on rsid
+                # increment index count to select next index
+                index_count+=1
             # Visualise
             # Graph 2
             # Graph 3

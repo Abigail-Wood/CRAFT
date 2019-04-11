@@ -44,7 +44,7 @@ def annotation_annoVar(df):
         to_annovar + ".exonic_variant_function", colnames)
     return df
 
-def finemap_annotation_annoVar(cred_snps):
+def finemap_annotation_annoVar(cred_snps, locus_df):
     """Use ANNOVAR to annotate prepared .cred FINEMAP output.
 
     FINEMAP outputs a .cred space-delimited text file. It contains the 95%
@@ -65,13 +65,14 @@ def finemap_annotation_annoVar(cred_snps):
         tempdir = "output"
 	# remove unnecessary columns
         cred_snps.drop(cred_snps.columns[[0,2]], axis=1)
+        # make a list of rsids in credible SNP set
+        rsid_list = list(cred_snps.columns[[1]])
+        # select locus DF information about rsids in credible SNP set
+        locus_df = locus_df[locus_df['rsid'].isin(rsid_list)]
+        cred_snps = prepare_df_annoVar(locus_df)
         # make file in tempdir
         to_annovar = os.path.join(tempdir, "to_annovar")
         cred_snps.to_csv(to_annovar, sep=' ', index=False, header=False)
-        # annovar conversion tool takes rsid list and returns input file
-        cmd  = f"{config.annovar_dir}/convert2annovar.pl -format rsid "
-        f"{to_annovar} -dbsnpfile humandb/hg19_snp138.txt > {to_annovar}"
-        os.system(cmd)
         # perform annotation with ANNOVAR (give input, standard output)
         cmd = (f"{config.annovar_dir}/annotate_variation.pl -geneanno "
             "-dbtype refGene -buildver hg19 "
