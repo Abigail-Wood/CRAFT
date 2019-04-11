@@ -1,4 +1,4 @@
-craft.annotate module
+craft.getSNPs
 ---------------------------
 
 .. automodule:: craft.getSNPs

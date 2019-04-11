@@ -1,4 +1,4 @@
-craft.annotate module
+craft.caviarbf
 ---------------------------
 
 .. automodule:: craft.caviarbf

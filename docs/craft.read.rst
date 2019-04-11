@@ -1,4 +1,4 @@
-craft.annotate module
+craft.read
 ---------------------------
 
 .. automodule:: craft.read

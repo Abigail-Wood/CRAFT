@@ -1,4 +1,4 @@
-craft.annotate module
+craft.paintor
 ---------------------------
 
 .. automodule:: craft.paintor

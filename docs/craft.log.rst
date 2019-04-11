@@ -1,4 +1,4 @@
-craft.annotate module
+craft.log
 ---------------------------
 
 .. automodule:: craft.log

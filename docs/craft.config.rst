@@ -1,4 +1,4 @@
-craft.annotate module
+craft.config
 ---------------------------
 
 .. automodule:: craft.config

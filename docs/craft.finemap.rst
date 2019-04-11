@@ -1,4 +1,4 @@
-craft.annotate module
+craft.finemap
 ---------------------------
 
 .. automodule:: craft.finemap

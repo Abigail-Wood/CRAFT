@@ -1,4 +1,4 @@
-craft.annotate module
+craft.visualise
 ---------------------------
 
 .. automodule:: craft.visualise
