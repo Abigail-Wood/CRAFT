@@ -11,9 +11,7 @@ Welcome to CRAFT's documentation!
    :maxdepth: 1
    :caption: Module Documentation:
 
-   scvi.dataset
-   scvi.inference
-   scvi.models
+   craft.annotate
 
 .. automodule:: craft.abf
     :members:
