@@ -8,6 +8,7 @@
 old/
 test/abf_validation_data/
 test/dataframe_tests/
+craft/test_visualise.py
 
 # CRAFT generated files #
 #########################
