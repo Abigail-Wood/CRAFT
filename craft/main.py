@@ -53,10 +53,13 @@ def parse_args():
         help='Include the MHC region. Default = %(default)s.')
     parser.add_argument(
         '--cred_threshold', choices={'95', '99'}, default='95',
-        help='Choose the cut-off threshold for cumulative posterior probability, when determining credible sets with ABF. Default = %(default)s.')
+        help='For use with ABF, choose the cut-off threshold for cumulative posterior probability when determining credible sets. Default = %(default)s.')
     parser.add_argument(
-        '--finemap_tool', choices={'cojo', 'finemap', 'paintor'},
-        help='Choose which finemap tool is used. Default = %(default)s.')
+        '--finemap_tool', choices={'finemap', 'paintor'},
+        help='Choose which finemapping tool is used. Default = %(default)s.')
+    parser.add_argument(
+        '--n_causal_snps', type=int, default=1,
+        help='For use with FINEMAP, specify the maximum number of causal snps considered in modelling.Default = %(default)s.')
     return parser.parse_args()
 
 def main():
