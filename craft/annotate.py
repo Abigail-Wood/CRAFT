@@ -62,14 +62,15 @@ def finemap_annotation_annoVar(cred_snps):
     internal dataframe, ready for merging with the original .cred file.
     """
     with tempfile.TemporaryDirectory() as tempdir:
-        # remove unnecessary columns and header
-        cred_snps.drop([0,2], axis=1)
-        cred_snps.drop([0])
+        tempdir = "output"
+	# remove unnecessary columns
+        cred_snps.drop(cred_snps.columns[[0,2]], axis=1)
         # make file in tempdir
         to_annovar = os.path.join(tempdir, "to_annovar")
+        cred_snps.to_csv(to_annovar, sep=' ', index=False, header=False)
         # annovar conversion tool takes rsid list and returns input file
         cmd  = f"{config.annovar_dir}/convert2annovar.pl -format rsid "
-        f"{cred_snps} -dbsnpfile humandb/hg19_snp138.txt > {to_annovar}"
+        f"{to_annovar} -dbsnpfile humandb/hg19_snp138.txt > {to_annovar}"
         os.system(cmd)
         # perform annotation with ANNOVAR (give input, standard output)
         cmd = (f"{config.annovar_dir}/annotate_variation.pl -geneanno "
@@ -77,6 +78,7 @@ def finemap_annotation_annoVar(cred_snps):
             f"{to_annovar} {config.annovar_dir}/humandb/")
         os.system(cmd)
         # read back in my temp output files as a dataframe with column names
+        colnames = list(cred_snps.columns)
         df = read.annovar(to_annovar + ".variant_function",
         to_annovar + ".exonic_variant_function", colnames)
     return df
