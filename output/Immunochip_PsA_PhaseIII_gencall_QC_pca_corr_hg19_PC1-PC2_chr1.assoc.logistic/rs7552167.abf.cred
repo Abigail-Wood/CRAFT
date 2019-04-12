@@ -1,2 +1,0 @@
-var_effect	genes	chromosome	position	position2	allele1	allele2	rsid	all_total	cases_total	controls_total	maf	pvalue	beta	se	index_rsid	ABF	pp	cpp
-intronic	IFNLR1	1	24508710	24508710	G	A	rs7524076	21768	3922	17846	0.380700	0.024480	-0.082295	0.036570	rs7552167	0.576548	0.985160	0.985160
