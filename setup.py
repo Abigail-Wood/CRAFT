@@ -9,9 +9,9 @@ with open('README.rst', 'r') as fh:
 requirements = [
     'pandas>=0.2',
     'numpy>=1.0',
-    'scipy>=1.1',
+    'scipy>=1.0',
     'PyVcf>=0.1',
-    'matplotlib>=2.0'
+    'matplotlib>=3.0.3'
 ]
 
 setup(
