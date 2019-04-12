@@ -18,7 +18,6 @@ base_annotation.vep
 .pyc
 *.craft
 test.*
-*.png
 output/
 
 # Developer notes files #
