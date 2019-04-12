@@ -19,6 +19,7 @@ base_annotation.vep
 *.craft
 test.*
 *.png
+output/
 
 # Developer notes files #
 #########################
