@@ -344,21 +344,21 @@ def locus(df,
         alpha = track_alpha if threshold else 1.0
         colors = [matplotlib.colors.to_rgba(c, alpha) for c in track_colors]
         trackax.set_ylabel('tracks')
-        trackax.spines['top'].set_visible(False)
         tracks_array = [df[df[track_column].str.contains(t)].positionMb
                         for t in tracks]
         trackax.eventplot(tracks_array, linelengths=track_linelength, colors=colors)
         if threshold:
+            if track_lines:
+                for p in cred_df.positionMb:
+                    trackax.axvline(p, zorder=-1, linewidth=0.5, color='k')
             tracks_array = [cred_df[cred_df[track_column].str.contains(t)].positionMb
                             for t in tracks]
             trackax.eventplot(tracks_array, linelengths=track_good_linelength, colors=track_colors)
-            if track_lines:
-                for p in cred_df.positionMb:
-                    trackax.axvline(p)
 
         trackax.set_yticks(range(len(tracks)))
         trackax.set_yticklabels(tracks)
         trackax.set_ylabel('')
+        trackax.set_ylim(-0.5, len(tracks)-0.5)
 
     if genes:
         geneax.set_ylabel('genes')
