@@ -3,6 +3,7 @@ import re
 import tempfile
 
 import vcf as pyvcf
+import pandas as pd
 
 import craft.config as config
 import craft.read as read
@@ -47,19 +48,26 @@ def annotation_annoVar(df):
 def finemap_annotation_annoVar(cred_snps, locus_df):
     """Use ANNOVAR to annotate prepared .cred FINEMAP output.
 
-    FINEMAP outputs a .cred space-delimited text file. It contains the 95%
-    credible sets for each causal signal conditional on other causal signals
-    in the genomic region together with conditional posterior inclusion
-    probabilities for each variant.
+    FINEMAP outputs a .cred space-delimited text file. It contains the
+    95% credible sets for each causal signal conditional on other causal
+    signals in the genomic region together with conditional posterior
+    inclusion probabilities for each variant.
 
-    ANNOVAR is able to take the list of rsids within the credible set and
-    prepare it for input, using convert2annovar.pl
+    This function:
+    Filters the locus dataframe (containing all summary statistic
+    information, including chromosome, position, allele 1, allele2),
+    using a list of rsids obtained from the .cred file.
 
-    ANNOVAR then adds gene-based annotation to the prepared input, using
-    annotate_variation.pl.
+    Uses the prepare_df_annoVAR function from craft.annotate to process
+    the  new dataframe as ANNOVAR input.
+    
+    Uses ANNOVAR to add gene-based annotation to the prepared input,
+    using annotate_variation.pl.
 
-    This function reads the final ANNOVAR input back and returns it as an
-    internal dataframe, ready for merging with the original .cred file.
+    Reads the final ANNOVAR input back and returns it as an internal
+    dataframe, removes unnecessary columns, and merges it using rsid as
+    an index to add the posterior probability from the original  .cred
+    file.
     """
     with tempfile.TemporaryDirectory() as tempdir:
         # make a list of rsids in credible SNP set
@@ -69,18 +77,27 @@ def finemap_annotation_annoVar(cred_snps, locus_df):
         cred_snps_prepared = prepare_df_annoVar(locus_df)
         # make file in tempdir
         to_annovar = os.path.join(tempdir, "to_annovar")
-        cred_snps_prepared.to_csv(to_annovar, sep='\t', index=False, header=False)
+        cred_snps_prepared.to_csv(to_annovar, sep='\t', index=False,
+                                  header=False)
         # perform annotation with ANNOVAR (give input, standard output)
         cmd = (f"{config.annovar_dir}/annotate_variation.pl -geneanno "
-            "-dbtype refGene -buildver hg19 "
-            f"{to_annovar} {config.annovar_dir}/humandb/")
+               "-dbtype refGene -buildver hg19 "
+               f"{to_annovar} {config.annovar_dir}/humandb/")
         os.system(cmd)
         # read back in my temp output files as a dataframe with column names
-        colnames = ['var_effect', 'genes', 'chromosome','position','position2','allele1','allele2','rsid','all_total','cases_total','controls_total','maf','pvalue','beta','se','index_rsid','ABF','pp']
+        colnames = ['var_effect', 'genes', 'chromosome','position','position2',
+                    'allele1','allele2','rsid','all_total','cases_total',
+                    'controls_total','maf','pvalue','beta','se','index_rsid',
+                    'ABF','pp']
         df = read.annovar(to_annovar + ".variant_function",
         to_annovar + ".exonic_variant_function", colnames)
-        df = df.drop(['position2', 'ABF'], axis=1)
-        print(cred_snps.head())
-        cred_snps = cred_snps.drop([0,3,4], axis=1)
-        print(cred_snps.head())
+        df = df.drop(['position2', 'ABF','pp'], axis=1)
+        column_list = list(cred_snps.columns)
+        cred_snps.rename(columns={f'{column_list[1]}':'rsid',
+                         f'{column_list[2]}':'pp'}, inplace=True)
+        cred_snps = cred_snps.drop([f'{column_list[0]}', f'{column_list[3]}'],
+                                   axis=1)
+        cred_snps = cred_snps.set_index('rsid')
+        df = pd.merge(df, cred_snps, how='left',on='rsid')
+        df = df.sort_values('pp', ascending=False)
     return df
