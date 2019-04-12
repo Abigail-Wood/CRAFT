@@ -50,7 +50,10 @@ def interpolate_bp(cm, map_file):
     return bp
 
 def get_index_snps_cm(df, alpha, distance, mhc, maps):
-    """ TODO: docstring. """
+    """ Return a dataframe of index SNPs (with p > alpha)
+
+    This function selects the SNP with the lowest p value > alpha, adds it to the list of index SNPs, discards everything within 'distance' range.
+    """
     # create df for results
     col_names = list(df.columns.values) + ['region_start_cm','region_end_cm', 'region_size_kb']
     index_df = pd.DataFrame(columns=col_names)
