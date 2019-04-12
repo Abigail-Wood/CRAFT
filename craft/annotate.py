@@ -62,7 +62,6 @@ def finemap_annotation_annoVar(cred_snps, locus_df):
     internal dataframe, ready for merging with the original .cred file.
     """
     with tempfile.TemporaryDirectory() as tempdir:
-        tempdir = "output"
         # make a list of rsids in credible SNP set
         rsid_list = list(cred_snps[cred_snps.columns[1]])
         # select locus DF information about rsids in credible SNP set

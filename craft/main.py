@@ -114,14 +114,14 @@ def main():
             finemap.finemap(locus_dfs, index_df, file_dir, options.n_causal_snps)
 
             # Annotate finemap cred file results by iterating through index_df to find each individual .cred file
-            print(index_df)
             i = 0
             for i, row in index_df.iterrows():
                 cred_file = os.path.join(file_dir, row.rsid + ".cred")
                 cred_snps = read.finemap_cred(cred_file)
+                locus_df = locus_dfs[i]
+                print(locus_df.head())
                 cred_snps_annotated = annotate.finemap_annotation_annoVar(cred_snps, locus_dfs[i])
-                # merge .cred file and cred_snps dataframe on rsid
-                print(cred_snps_annotated.head())
+                cred_snps_annotated.to_csv(f"{os.path.join(file_dir, row.rsid)}.cred.annotated", sep='\t', float_format='%5f', index=False) 
                 # increment index count to select next index
                 i+=1
             # Visualise
