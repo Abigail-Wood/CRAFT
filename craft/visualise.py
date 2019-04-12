@@ -146,6 +146,7 @@ def ld_block(array, names,
     return fig
 
 def manhattan(df, x_label,
+              index_df = None,
               alpha = 5e-8,
               figsize = (8, 5),
               size = 1,
@@ -167,15 +168,25 @@ def manhattan(df, x_label,
        "pvalue": the P value of each SNP;
        "position": the position of the SNP (in base-pairs);
 
-    If labelling of the most significant SNPs is required, (controlled
-    by `alpha` and `good_label_column` parameters), the DataFrame must
-    also have a column labelled by the `good_label_column` parameter.
+    If automatic labelling of the most significant SNPs is required,
+    (controlled by `index_df` and `alpha` parameters), the DataFrame
+    must also have a column labelled by the `good_label_column`
+    parameter.
+
+    `index_df`, if present, is a Pandas dataframe like `df`, with the
+    same required columns, identifying the SNPs to be labelled.
 
     `x_label` is a label for the x axis (such as "Chromosome 17").
 
-    `alpha` is the threshold for distinguishing "good" SNPs (those
-    with pvalue less than alpha). If None, no threshold is marked and
-    "good" SNPs are not distinguished.
+    `alpha` is a threshold for distinguishing "good" SNPs.
+
+    If `index_df` is present then the SNPs in it will be
+    distinguished. If `index_df` is absent, and `alpha` is set, then
+    SNPs with pvalue less than `alpha` are distinguished.
+
+    Distinguished SNPs are drawn differently (see the `good_`
+    parameters below). If `index_df` is present, or if both `alpha`
+    and `good_label_column` are set
 
     `figsize` is the figure size (width, height) in inches.
 
@@ -198,10 +209,11 @@ def manhattan(df, x_label,
 
     `good_marker` is the marker style for "good" SNPs.
 
-    `good_label_column` is the column name in `df` for labels to be
-    drawn for "good" SNPs, or None for no labels.
+    `good_label_column` is the column name in `df` or `index_df` for
+    labels to be drawn for "good" SNPs, or None for no labels.
 
     `good_label_rotation` is the rotation for labels for "good" SNPs.
+
     """
 
     # calculate -log_10(P) to plot
@@ -218,16 +230,21 @@ def manhattan(df, x_label,
     ax.scatter(df['positionMb'],df['minuslog10pvalue'],
                s=size, color=color, marker=marker)
 
-    # if we have a threshold (alpha), draw a horizontal line and
-    # redraw the points above it.
+    # if we have a threshold (alpha), draw the line
     if alpha:
         ax.axhline(-numpy.log10(alpha),
                    linestyle=alpha_line_style,
                    linewidth=alpha_line_width,
                    color=alpha_line_color)
 
-        # identify and redraw the points above the line
-        index_df = df[df.pvalue < alpha]
+
+    # if we need to distinguish points:
+    if alpha or index_df:
+        # which points to distinguish:
+        if not index_df:
+            index_df = df[df.pvalue < alpha]
+
+        # draw them differently
         ax.scatter(index_df['positionMb'], index_df['minuslog10pvalue'],
                    s=good_size,
                    color=good_color,
