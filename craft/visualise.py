@@ -239,10 +239,13 @@ def manhattan(df, x_label,
 
 
     # if we need to distinguish points:
-    if alpha or index_df:
+    if alpha or (index_df is not None):
         # which points to distinguish:
-        if not index_df:
+        if index_df is None:
             index_df = df[df.pvalue < alpha]
+        else:
+            index_df['positionMb'] = index_df.position / 1e6
+            index_df['minuslog10pvalue'] = -numpy.log10(index_df.pvalue)
 
         # draw them differently
         ax.scatter(index_df['positionMb'], index_df['minuslog10pvalue'],

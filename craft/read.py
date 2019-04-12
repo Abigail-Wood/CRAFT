@@ -78,6 +78,11 @@ def annovar(file, file_exonic, colnames):
     return df
 
 def finemap_cred(cred_file):
-    """Read FINEMAP .cred file into an internal dataframe."""
+    """Read FINEMAP .cred file into a dataframe."""
     cred_snps = pd.read_csv(cred_file, sep=' ')
     return cred_snps
+
+def index(output_file):
+    """ Read CRAFT .index output file into a dataframe """
+    index_df = pd.read_csv(output_file, sep='\t')
+    return index_df
