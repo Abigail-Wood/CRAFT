@@ -116,7 +116,6 @@ def main():
             index_count = 0
             for row in index_df:
                 cred_file = os.path.join(file_dir, index_df.at[index_count, 'rsid'] + ".cred")
-                print(cred_file)
                 cred_snps = read.finemap_cred(cred_file)
                 cred_snps = annotate.finemap_annotation_annoVar(cred_snps, locus_dfs[index_count])
                 print(cred_snps.head())

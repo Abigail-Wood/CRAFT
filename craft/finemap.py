@@ -102,7 +102,7 @@ def finemap(data_dfs, index_df, file_dir, n_causal_snps):
 
         # run finemap (tell it data files are in temp directory)
         if n_causal_snps:
-            cmd = (f"{config.finemap_dir}" + "/finemap_v1.3.1_x86_64" + f" --sss --in-files {master_file} --log  --n_causal_snps {n_causal_snps}")
+            cmd = (f"{config.finemap_dir}" + "/finemap_v1.3.1_x86_64" + f" --sss --in-files {master_file} --log  --n-causal-snps {n_causal_snps}")
             os.system(cmd)
         else:
             cmd = (f"{config.finemap_dir}" + "/finemap_v1.3.1_x86_64" + f" --sss --in-files {master_file} --log")

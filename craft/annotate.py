@@ -64,20 +64,20 @@ def finemap_annotation_annoVar(cred_snps, locus_df):
     with tempfile.TemporaryDirectory() as tempdir:
         tempdir = "output"
         # make a list of rsids in credible SNP set
-        rsid_list = list(cred_snps.columns[[1]])
+        rsid_list = list(cred_snps[cred_snps.columns[1]])
         # select locus DF information about rsids in credible SNP set
         locus_df = locus_df[locus_df['rsid'].isin(rsid_list)]
         cred_snps = prepare_df_annoVar(locus_df)
         # make file in tempdir
         to_annovar = os.path.join(tempdir, "to_annovar")
-        cred_snps.to_csv(to_annovar, sep=' ', index=False, header=False)
+        cred_snps.to_csv(to_annovar, sep='\t', index=False, header=False)
         # perform annotation with ANNOVAR (give input, standard output)
         cmd = (f"{config.annovar_dir}/annotate_variation.pl -geneanno "
             "-dbtype refGene -buildver hg19 "
             f"{to_annovar} {config.annovar_dir}/humandb/")
         os.system(cmd)
         # read back in my temp output files as a dataframe with column names
-        colnames = list(cred_snps.columns)
+        colnames = ['var_effect', 'genes'] + list(locus_df.columns)
         df = read.annovar(to_annovar + ".variant_function",
         to_annovar + ".exonic_variant_function", colnames)
     return df
