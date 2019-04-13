@@ -77,12 +77,22 @@ def annovar(file, file_exonic, colnames):
         df = pd.merge(df, df2, how='left',on='rsid')
     return df
 
-def finemap_cred(cred_file):
+def finemap_cred(file):
     """Read FINEMAP .cred file into a dataframe."""
-    cred_snps = pd.read_csv(cred_file, sep=' ')
+    cred_snps = pd.read_csv(file, sep=' ')
     return cred_snps
 
-def index(output_file):
+def index(file):
     """ Read CRAFT .index output file into a dataframe """
-    index_df = pd.read_csv(output_file, sep='\t')
+    index_df = pd.read_csv(file, sep='\t')
     return index_df
+
+def ld(file):
+    ld_array = np.fromfile(file, dtype=float)
+    return ld_array
+
+def ld_rsids(file):
+    file = open(file, "r")
+    ld_rsids = file.readlines()
+    file.close()
+    return ld_rsids

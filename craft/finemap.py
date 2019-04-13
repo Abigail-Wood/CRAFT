@@ -61,7 +61,7 @@ def finemap(data_dfs, index_df, file_dir, n_causal_snps):
 
             # set filenames in tempdir with index SNP rsid (as unique identifier for input and output files)
             z_file = os.path.join(tempdir, index + ".z")
-            variant_file = os.path.join(tempdir, index + "_variant.txt")
+            variant_file = os.path.join(file_dir, index + "_variant.txt")
             plink_basename = os.path.join(config.plink_basename_dir, f"chr{chr}_ld_panel")
             bcor_file = os.path.join(tempdir, index + ".bcor")
             ld_file = os.path.join(file_dir, index + ".ld")
