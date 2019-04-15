@@ -61,9 +61,9 @@ def finemap(data_dfs, index_df, file_dir, n_causal_snps):
 
             # set filenames in tempdir with index SNP rsid (as unique identifier for input and output files)
             z_file = os.path.join(tempdir, index + ".z")
-            variant_file = os.path.join(file_dir, index + "_variant.txt")
             plink_basename = os.path.join(config.plink_basename_dir, f"chr{chr}_ld_panel")
             bcor_file = os.path.join(tempdir, index + ".bcor")
+            variant_file = os.path.join(file_dir, index + "_variant.txt")
             ld_file = os.path.join(file_dir, index + ".ld")
             snp_file = os.path.join(file_dir, index + ".snp")
             config_file = os.path.join(file_dir, index + ".config")
@@ -107,4 +107,28 @@ def finemap(data_dfs, index_df, file_dir, n_causal_snps):
         else:
             cmd = (f"{config.finemap_dir}" + "/finemap_v1.3.1_x86_64" + f" --sss --in-files {master_file} --log")
             os.system(cmd)
+
+        # need to take in index_df region definitions.
+        index_count = 0
+
+        for data in data_dfs:
+            # set filenames in tempdir with index SNP rsid (as unique identifier for input and output files)
+            index = index_df.at[index_count, 'rsid']
+            bcor_file = os.path.join(tempdir, index + ".bcor")
+            cred_file = os.path.join(file_dir, index + ".cred")
+            variant_file = os.path.join(file_dir, index + "_variant.cred.txt")
+            ldcred_file = os.path.join(file_dir, index + ".cred.ld")
+
+            # order of SNPs in LD file must correspond to order in .cred file
+            variants = read.finemap_cred(cred_file)
+            variants = variants[['rsid','position','chromosome','allele1','allele2']]
+            variants.to_csv(variant_file, sep=' ', index=False, header=['RSID','position','chromosome','A_allele','B_allele'])
+
+            # make an LD file matrix for our rsids in locus (matrix)
+            cmd = (ld_store_executable + f" --bcor {bcor_file}_1 --matrix {ldcred_file} --incl-variants {variant_file}")
+            os.system(cmd)
+
+            # increment index count to bring in new region definition.
+            index_count+=1
+
     return 0
