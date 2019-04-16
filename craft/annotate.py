@@ -91,13 +91,8 @@ def finemap_annotation_annoVar(cred_snps, locus_df):
                     'ABF','pp']
         df = read.annovar(to_annovar + ".variant_function",
         to_annovar + ".exonic_variant_function", colnames)
+        # Drop unnecessary columns from locus SNPs dataframe before merge
         df = df.drop(['position2', 'ABF','pp'], axis=1)
-        column_list = list(cred_snps.columns)
-        cred_snps.rename(columns={f'{column_list[1]}':'rsid',
-                         f'{column_list[2]}':'pp'}, inplace=True)
-        # change to retain [1] and [2] rather than drop.
-        cred_snps = cred_snps.drop([f'{column_list[0]}', f'{column_list[3]}'],
-                                   axis=1)
         cred_snps = cred_snps.set_index('rsid')
         df = pd.merge(df, cred_snps, how='left',on='rsid')
         df = df.sort_values('pp', ascending=False)
