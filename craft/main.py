@@ -105,10 +105,6 @@ def main():
             # Output credible SNP set
             data.to_csv(f"{os.path.join(file_dir, data.index_rsid.unique()[0])}.abf.cred", sep='\t', float_format='%5f', index=False)
 
-        # Visualise ABF outputs
-        # Graph 1
-        # Graph 2
-
         # Finemapping, if specified on command-line.
         if options.finemap_tool == "finemap":
             finemap.finemap(locus_dfs, index_df, file_dir, options.n_causal_snps)
@@ -122,9 +118,6 @@ def main():
                 cred_snps_annotated.to_csv(f"{os.path.join(file_dir, row.rsid)}.cred.annotated", sep='\t', float_format='%5f', index=False)
                 # increment index count to select next index
                 i+=1
-            # Visualise
-            # Graph 2
-            # Graph 3
         elif options.finemap_tool == "paintor":
             paintor.paintor(locus_dfs, index_df)
 
