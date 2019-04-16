@@ -52,7 +52,8 @@ def fit_text(ax, *args, **kwargs):
     ax.set_xlim(nl,nr)
     ax.set_ylim(nb,nt)
 
-def ld_block(array, names,
+def ld_block(array,
+             names = None,
              labels = None,
              figsize = (8, 5),
              cmap = 'Reds',
@@ -62,7 +63,7 @@ def ld_block(array, names,
     triangle of the array (above the diagonal) is used.
 
     `names` is an iterable of names, which should be the same length as the
-    number of rows in `array`.
+    number of rows in `array`. If None, no names are passed.
 
     `labels`, if present, is a dictionary of labels with available
     keys "mid", "left", and "right", for example
@@ -109,11 +110,12 @@ def ld_block(array, names,
     ax.set_ylim(-s2*lds/2, 1)
 
     # add labels for each item, changing the view limits to fit.
-    for i,n in enumerate(names):
-        fit_text(ax, i*s2, 0, n,
-                 rotation='vertical',
-                 horizontalalignment='center',
-                 verticalalignment='bottom')
+    if names is not None:
+        for i,n in enumerate(names):
+            fit_text(ax, i*s2, 0, n,
+                     rotation='vertical',
+                     horizontalalignment='center',
+                     verticalalignment='bottom')
 
     # don't draw axes,
     ax.set_axis_off()
