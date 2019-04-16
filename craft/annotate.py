@@ -70,7 +70,6 @@ def finemap_annotation_annoVar(cred_snps, locus_df):
     file.
     """
     with tempfile.TemporaryDirectory() as tempdir:
-        tempdir = output
         # make a list of rsids in credible SNP set
         rsid_list = list(cred_snps[cred_snps.columns[0]])
         # select locus DF information about rsids in credible SNP set
