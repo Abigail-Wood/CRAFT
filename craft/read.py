@@ -94,6 +94,7 @@ def finemap_cred(file):
     cred_dfs = []
     for i in range(no_cols):
         cred_df = cred_snps[cred_snps.columns[2*i + 1: 2*i + 3]]
+        cred_df = cred_df.rename(columns={cred_df.columns[0]:"rsid", cred_df.columns[1]:"pp"})
         cred_df = cred_df.dropna(axis=0)
         cred_dfs.append(cred_df)
     return cred_dfs
