@@ -28,7 +28,8 @@ output/
 ##############################
 annovar/
 PAINTOR_V3.0/
-LDStore/
+LDstore/
+finemap/
 
 # Package distribution files #
 ##############################
