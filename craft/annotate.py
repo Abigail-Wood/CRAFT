@@ -59,7 +59,7 @@ def finemap_annotation_annoVar(cred_snps, locus_df):
     using a list of rsids obtained from the .cred file.
 
     Uses the prepare_df_annoVAR function from craft.annotate to process
-    the  new dataframe as ANNOVAR input.
+    the new dataframe as ANNOVAR input.
 
     Uses ANNOVAR to add gene-based annotation to the prepared input,
     using annotate_variation.pl.
@@ -70,8 +70,9 @@ def finemap_annotation_annoVar(cred_snps, locus_df):
     file.
     """
     with tempfile.TemporaryDirectory() as tempdir:
+        tempdir = output
         # make a list of rsids in credible SNP set
-        rsid_list = list(cred_snps[cred_snps.columns[1]])
+        rsid_list = list(cred_snps[cred_snps.columns[0]])
         # select locus DF information about rsids in credible SNP set
         locus_df = locus_df[locus_df['rsid'].isin(rsid_list)]
         cred_snps_prepared = prepare_df_annoVar(locus_df)
