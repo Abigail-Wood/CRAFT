@@ -53,6 +53,7 @@ def fit_text(ax, *args, **kwargs):
     ax.set_ylim(nb,nt)
 
 def ld_block(array,
+             indexes = None,
              names = None,
              labels = None,
              figsize = (8, 5),
@@ -62,8 +63,14 @@ def ld_block(array,
     `array` is a square numpy array containing LD values. Only the upper
     triangle of the array (above the diagonal) is used.
 
-    `names` is an iterable of names, which should be the same length as the
-    number of rows in `array`. If None, no names are passed.
+    `indexes` is an iterable of index values into the rows and columns
+    of `array`, identifying the SNPs to display. If None, the whole
+    array is displayed.
+
+    `names` is an iterable of names, which should be the same length
+    as `indexes`, or the number of rows in `array`, used to display
+    row/column names above the LD block. If None, no names are
+    displayed.
 
     `labels`, if present, is a dictionary of labels with available
     keys "mid", "left", and "right", for example
@@ -76,7 +83,10 @@ def ld_block(array,
     `cmap` is the name of a Matplotlib colormap.
 
     `colorbar` controls whether to add a colorbar. The default is True.
+
     """
+
+    assert array.ndim == 2
 
     if labels:
         fig, (lab_ax,ax) = plt.subplots(2,
@@ -86,6 +96,12 @@ def ld_block(array,
                                             hspace=0))
     else:
         fig, ax = plt.subplots(figsize=figsize)
+
+    if indexes is not None:
+        l = list(indexes) # for consumable iterables
+        assert 0 <= min(l)
+        assert max(l) < array.shape[0]
+        array = array[..., l][l, ...]
 
     # how many items
     lds = array.shape[0]
@@ -229,7 +245,7 @@ def manhattan(df, x_label,
     fig, ax = plt.subplots(figsize=figsize)
 
     # plot the main scatter
-    ax.scatter(df['positionMb'],df['minuslog10pvalue'],
+    ax.scatter(df.positionMb, df.minuslog10pvalue,
                s=size, color=color, marker=marker)
 
     # if we have a threshold (alpha), draw the line
@@ -249,8 +265,9 @@ def manhattan(df, x_label,
             index_df['positionMb'] = index_df.position / 1e6
             index_df['minuslog10pvalue'] = -numpy.log10(index_df.pvalue)
 
+
         # draw them differently
-        ax.scatter(index_df['positionMb'], index_df['minuslog10pvalue'],
+        ax.scatter(index_df.positionMb, index_df.minuslog10pvalue,
                    s=good_size,
                    color=good_color,
                    marker=good_marker)
@@ -293,6 +310,8 @@ def locus(df,
           track_linelength = 0.7,
           track_good_linelength = 1.0,
           track_lines = False,
+          track_line_width=0.5,
+          track_line_color='k',
           pos_top = False,
           # future work:
           genes = None,
@@ -300,7 +319,7 @@ def locus(df,
           ):
     df['positionMb'] = df.position / 1e6
     total_height = 1 + track_height + gene_height
-    if tracks and genes:
+    if tracks and (genes is not None):
         height_ratios = [track_height, gene_height]
         if pos_top:
             height_ratios.push(1)
@@ -316,7 +335,7 @@ def locus(df,
             geneax, trackax, posax = axes
         bottomax = axes[-1]
 
-    elif tracks or genes:
+    elif tracks or (genes is not None):
         pos_index = 0 if pos_top else 1
         other_index = 1 - pos_index
         height2 = track_height if tracks else gene_height
@@ -372,7 +391,8 @@ def locus(df,
         if threshold:
             if track_lines:
                 for p in cred_df.positionMb:
-                    trackax.axvline(p, zorder=-1, linewidth=0.5, color='k')
+                    trackax.axvline(p, zorder=-1,
+                                    linewidth=track_line_width, color=track_line_color)
             tracks_array = [cred_df[cred_df[track_column].str.contains(t)].positionMb
                             for t in tracks]
             trackax.eventplot(tracks_array, linelengths=track_good_linelength, colors=track_colors)
@@ -380,14 +400,22 @@ def locus(df,
         trackax.set_yticks(range(len(tracks)))
         trackax.set_yticklabels(tracks)
         trackax.set_ylabel('')
-        trackax.set_ylim(-0.5, len(tracks)-0.5)
+        half_linelength = max(track_good_linelength, track_linelength)/2
+        trackax.set_ylim(-half_linelength-0.1, len(tracks)-1+half_linelength+0.1)
 
-    if genes:
+    if genes is not None:
         geneax.set_ylabel('genes')
-        geneax.spines['top'].set_visible(False)
-        geneax.spines['left'].set_visible(False)
-        geneax.spines['right'].set_visible(False)
-        geneax.tick_params(which='both', left=False, labelleft=False)
+        # geneax.spines['top'].set_visible(False)
+        # geneax.tick_params(which='both', left=False, labelleft=False)
+        xlims = geneax.get_xlim()
+        y = 0.25
+        for start, end, name1, name2, strand in genes:
+            geneax.plot((start/1e6, end/1e6), (y,y))
+            geneax.text((start + end)/2e6, y+0.05, name1)
+            y = 1-y
+        geneax.set_xlim(xlims)
+        geneax.set_ylim(0,1)
+
 
     return fig
 
