@@ -27,8 +27,8 @@ output/
 # Required software or files #
 ##############################
 annovar/
-caviarBF/
 PAINTOR_V3.0/
+LDStore/
 
 # Package distribution files #
 ##############################
