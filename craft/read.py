@@ -90,7 +90,13 @@ def abf_cred(file):
 def finemap_cred(file):
     """Read FINEMAP .cred file into a dataframe."""
     cred_snps = pd.read_csv(file, sep=' ')
-    return cred_snps
+    no_cols = int((len(cred_snps.columns) - 2)/ 2)
+    cred_dfs = []
+    for i in range(no_cols):
+        cred_df = cred_snps[cred_snps.columns[2*i + 1: 2*i + 3]]
+        cred_df = cred_df.dropna(axis=0)
+        cred_dfs.append(cred_df)
+    return cred_dfs
 
 def ld(file):
     """ Read CRAFT .ld output file into a numpy array."""

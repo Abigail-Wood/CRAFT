@@ -112,7 +112,9 @@ def main():
             i = 0
             for i, row in index_df.iterrows():
                 cred_file = os.path.join(file_dir, row.rsid + ".cred")
-                cred_snps = read.finemap_cred(cred_file)
+                cred_dfs = read.finemap_cred(cred_file)
+                cred_snps = pd.concat(cred_dfs)
+                print(cred_snps)
                 cred_snps_annotated = annotate.finemap_annotation_annoVar(cred_snps, locus_dfs[i])
                 # write annotated SNPS dataframe as output file.
                 cred_snps_annotated.to_csv(f"{os.path.join(file_dir, row.rsid)}.cred.annotated", sep='\t', float_format='%5f', index=False)

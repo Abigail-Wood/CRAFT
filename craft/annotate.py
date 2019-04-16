@@ -60,7 +60,7 @@ def finemap_annotation_annoVar(cred_snps, locus_df):
 
     Uses the prepare_df_annoVAR function from craft.annotate to process
     the  new dataframe as ANNOVAR input.
-    
+
     Uses ANNOVAR to add gene-based annotation to the prepared input,
     using annotate_variation.pl.
 
@@ -95,6 +95,7 @@ def finemap_annotation_annoVar(cred_snps, locus_df):
         column_list = list(cred_snps.columns)
         cred_snps.rename(columns={f'{column_list[1]}':'rsid',
                          f'{column_list[2]}':'pp'}, inplace=True)
+        # change to retain [1] and [2] rather than drop.
         cred_snps = cred_snps.drop([f'{column_list[0]}', f'{column_list[3]}'],
                                    axis=1)
         cred_snps = cred_snps.set_index('rsid')
