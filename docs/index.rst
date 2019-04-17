@@ -25,7 +25,8 @@ Welcome to CRAFT's documentation!
 .. toctree::
    :maxdepth: 2
    :caption: Visualisation Documentation:
-   readme
+
+   visualisation_readme
    craft.visualise
    craft.figure_generator
 
