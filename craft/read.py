@@ -99,13 +99,17 @@ def finemap_cred(file):
         cred_dfs.append(cred_df)
     return cred_dfs
 
+def cred_annotated(file):
+    """Read CRAFT .cred.annotated file into a dataframe."""
+    cred_df = pd.read_csv(file, sep='\t')
+    return cred_df
+
 def ld(file):
     """ Read CRAFT .ld output file into a numpy array."""
     ld_array = np.loadtxt(file)
     return ld_array
 
-def ld_rsids(file):
+def variant_file(file):
     """ Read CRAFT variant_file rsids into a list."""
-    df = pd.read_csv(file, sep=' ')
-    ld_rsids = list(df['RSID'])
-    return ld_rsids
+    variant_df = pd.read_csv(file, sep=' ')
+    return variant_df
