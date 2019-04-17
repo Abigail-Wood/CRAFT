@@ -28,9 +28,7 @@ def plink(file, frq_file):
     frq_df = pd.read_csv(frq_file, sep='\s+')[cols]
     # takes MAF_U as reflects 'unaffected' population controls, unless MAF_U > 0.5, in which case it uses MAF_A
     frq_df.rename(columns={'CHR':'chromosome','SNP':'rsid','A2':'allele2','MAF_U':'maf','NCHROBS_A':'cases_total','NCHROBS_U':'controls_total'}, inplace=True)
-    for index, row in frq_df.iterrows():
-        if row['maf'] >= 0.5:
-            row['maf'] = row['MAF_A']
+    frq_df['maf'].values[frq_df['maf'] > 0.5] = 0.5
     # if chromosome column has more than 1 number, read chromosome number from .assoc.logistic file and only include rows with that value.
     chromosomes = df.chromosome.unique()
     frq_df = frq_df[frq_df['chromosome'].isin(chromosomes)]
