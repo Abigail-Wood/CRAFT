@@ -68,15 +68,25 @@ def run(options):
         variant_df = read.variant_file(options.ld_rsids)
         variant_dict = dict(zip(variant_df['RSID'],variant_df.index))
         indexes = []
+        for key in variant_dict:
+            indexes.append(variant_dict[key])
+        positions = variant_df.position.unique()
+
+        ld_chart1 = visualise.ld_block(ld_array, indexes, names=None,
+                    labels=dict(mid=f"chromosome {cred_df.chromosome.unique()[0]}", left=min(positions), right=max(positions)))
+        ld_chart1.savefig('ld1.png', dpi=300)
+
+        indexes = []
         for snp in cred_snps:
             assert snp in variant_dict
             indexes.append(variant_dict[snp])
         # add positions and names using cred SNPs annotated.
         positions = cred_df.position.unique()
         names = cred_snps
-        ld_chart1 = visualise.ld_block(ld_array, indexes, names,
+
+        ld_chart2 = visualise.ld_block(ld_array, indexes, names,
                     labels=dict(mid=f"chromosome {cred_df.chromosome.unique()[0]}", left=min(positions), right=max(positions)))
-        ld_chart1.savefig('ld1.png', dpi=300)
+        ld_chart2.savefig('ld2.png', dpi=300)
 
     if options.locus and options.cred_type == 'abf':
         # tracknames come from unique values in var_effect column
