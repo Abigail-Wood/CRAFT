@@ -9,7 +9,7 @@ Welcome to CRAFT's documentation!
 
 .. toctree::
    :maxdepth: 1
-   :caption: Module Documentation:
+   :caption: CRAFT Pipeline Documentation:
 
    craft.annotate
    craft.abf
@@ -21,7 +21,13 @@ Welcome to CRAFT's documentation!
    craft.main
    craft.paintor
    craft.read
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Visualisation Documentation:
+   readme
    craft.visualise
+   craft.figure_generator
 
 Indices and tables
 ==================
