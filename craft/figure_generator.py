@@ -19,25 +19,27 @@ def parse_args():
                         help='''If any error arises, fall into the Python
                         debugger.''')
     parser.add_argument('--verbose', '-v', action='count',
-                        help='Increase logging verbosity..')
-    parser.add_argument('--input_file', '-i',
-                        help='Locate original input file.')
-    parser.add_argument('--index_file', '-ix',
-                        help='Locate CRAFT .index output file.')
-    parser.add_argument('--ld_file', '-ldi',
-                        help='Locate LD input file for locus.')
-    parser.add_argument('--ld_rsids', '-ldr',
-                        help='Locate list of RSIDs (variant_file.txt)')
-    parser.add_argument('--cred_file', '-c',
-                        help='Locate .cred file (abf or finemap.)')
+                        help='Increase logging verbosity.')
     parser.add_argument('--manhattan', '-m', action='store_true',
                         help='Draw Manhattan charts.')
     parser.add_argument('--ld', '-l', action='store_true',
                         help='Draw LD block charts.')
     parser.add_argument('--locus', '-u', action='store_true',
                         help='Draw locus charts.')
+    parser.add_argument('--input_file', '-i',
+                        help='Locate original input file.')
+    parser.add_argument('--index_file', '-ix',
+                        help='Locate CRAFT .index output file.')
+    parser.add_argument('--ld_file', '-ldi',
+                        help='Locate FINEMAP output .ld file')
+    parser.add_argument('--ld_rsids', '-ldr',
+                        help='Locate FINEMAP input variant_file.txt.')
     parser.add_argument('--cred_type', '-t', choices=['finemap','abf'],
-                        help='Specify type of .cred file provided.')
+                        help='Specify type of output .cred file provided. Choices are ABF or FINEMAP.')
+    parser.add_argument('--cred_file', '-c',
+                        help='Locate output .cred file (ABF or FINEMAP.)')
+    parser.add_argument('--snp_file', '-s',
+                        help='Locate FINEMAP output .snp file.')
 
     return parser.parse_args()
 
@@ -88,78 +90,44 @@ def run(options):
                     labels=dict(mid=f"chromosome {cred_df.chromosome.unique()[0]}", left=min(positions), right=max(positions)))
         ld_chart2.savefig('ld2.png', dpi=300)
 
-    if options.locus and options.cred_type == 'abf':
+    if options.locus:
         # tracknames come from unique values in var_effect column
-        cred_df = read.abf_cred(options.cred_file)
-        tracknames= cred_df.var_effect.unique()
-        # Don't yet understand this bit.
-        nt = scipy.stats.hypergeom(50, len(tracknames), len(tracknames))
-        tracks = [','.join(numpy.random.choice(tracknames,size=i,replace=False)) for i in nt.rvs(size=1196)]
-        # Dataframe for cred snps
-        df = DataFrame({'rsid' : cred_df['rsid'],
-                        'position' : cred_df['position'],
-                        'posterior' : cred_df['pp'],
-                        'tracks' : tracks})
-        # with the probability chart on the bottom
-        locus_chart1 = visualise.locus(df, tracks=None, track_column='tracks', pos_top = False)
-        locus_chart1.savefig('locus1.png', dpi=300)
-        # without any tracks chart
-        locus_chart2 = visualise.locus(df, tracks=False)
-        locus_chart2.savefig('locus2.png', dpi=300)
-        # With the probability chart on the bottom and a number of other parameter tweaks.
-        # This shows some of the other design possibilities.
-        locus_chart3 = visualise.locus(df,
-                                    alpha_line_color='g',
-                                    alpha_line_style=':',
-                                    good_size=10,
-                                    good_marker='x',
-                                    good_color='r',
-                                    good_label_column=None,
-                                    tracks=tracknames[2:5],
-                                    track_good_linelength=0.8,
-                                    track_linelength=0.8,
-                                    track_alpha = 1,
-                                    pos_top = False,
-                                    track_height=0.25,
-                                    figsize=(6,6),
-                                    track_lines = True)
-        locus_chart3.savefig('locus3.png', dpi=300)
+        if options.cred_type == 'abf':
+            df = read.abf_cred(options.cred_file)
+            tracknames= list(df.var_effect.unique())
+        if options.cred_type == 'finemap':
+            df = read.cred_annotated(options.cred_file)
+            tracknames= list(df.var_effect.unique())
+        else:
+            if options.snp_file:
+                df = read.snp(options.snp_file)
+                tracknames=None
 
-    if options.locus and options.cred_type =='finemap':
-        # tracknames come from unique values in var_effect column
-        cred_df = read.finemap_cred(options.cred_file)
-        tracknames= cred_df.var_effect.unique()
-        # Don't yet understand this bit.
-        nt = scipy.stats.hypergeom(50, len(tracknames), len(tracknames))
-        tracks = [','.join(numpy.random.choice(tracknames,size=i,replace=False)) for i in nt.rvs(size=1196)]
-        # Dataframe for cred snps
-        df = DataFrame({'rsid' : cred_df['rsid'],
-                        'position' : cred_df['position'],
-                        'posterior' : cred_df['pp'],
-                        'tracks' : tracks})
-        # with the probability chart on the bottom
-        locus_chart1 = visualise.locus(df, tracks=None, track_column='tracks', pos_top = False)
+        # default plot (posterior plot, SNP labelling, no tracks)
+        locus_chart1 = visualise.locus(df, pos_top = False)
         locus_chart1.savefig('locus1.png', dpi=300)
-        # without any tracks chart
-        locus_chart2 = visualise.locus(df, tracks=False)
+
+        # second plot (posterior plot, SNP labelling, label rotation)
+        locus_chart2 = visualise.locus(df, tracks=False, good_label_rotation=45, alpha_line_color='g', alpha_line_style=':', good_marker='x')
         locus_chart2.savefig('locus2.png', dpi=300)
-        # With the probability chart on the bottom and a number of other parameter tweaks.
-        # This shows some of the other design possibilities.
+
+        # third plot (posterior plot, tracks)
         locus_chart3 = visualise.locus(df,
+                                    size = 10,
                                     alpha_line_color='g',
                                     alpha_line_style=':',
                                     good_size=10,
                                     good_marker='x',
                                     good_color='r',
-                                    good_label_column=None,
-                                    tracks=tracknames[2:5],
+                                    good_label_rotation=30,
+                                    tracks=tracknames,
+                                    track_column = 'var_effect',
                                     track_good_linelength=0.8,
                                     track_linelength=0.8,
                                     track_alpha = 1,
                                     pos_top = False,
                                     track_height=0.25,
-                                    figsize=(6,6),
-                                    track_lines = True)
+                                    figsize=(6,6))
         locus_chart3.savefig('locus3.png', dpi=300)
 
 def main():

@@ -113,3 +113,9 @@ def variant_file(file):
     """ Read CRAFT variant_file rsids into a list."""
     variant_df = pd.read_csv(file, sep=' ')
     return variant_df
+
+def snp(file):
+    """Read FINEMAP .snp file into a dataframe."""
+    snp_df = pd.read_csv(file, sep=' ')
+    snp_df.rename(columns={'prob' : 'pp'}, inplace=True)
+    return snp_df

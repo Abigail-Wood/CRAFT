@@ -365,11 +365,13 @@ def locus(df,
         fig, posax = plt.subplots(figsize=figsize)
         bottomax = posax
 
-    posax.scatter(df.positionMb, df.posterior,
+    posax.scatter(df.positionMb, df.pp,
                   s=size, color=color, marker=marker)
 
+    chromosome = df.chromosome.unique()[0]
     posax.set_ylabel('Posterior probability')
-    bottomax.set_xlabel(f'position (Mbp)')
+    posax.set_ylim(0,1)
+    bottomax.set_xlabel(f'Chromosome {chromosome}; position (Mbp)')
 
     if threshold:
         posax.axhline(threshold,
@@ -377,16 +379,19 @@ def locus(df,
                       linewidth=alpha_line_width,
                       color=alpha_line_color)
 
-        cred_df = df[df.posterior > threshold]
-        posax.scatter(cred_df.positionMb, cred_df.posterior,
+        cred_df = df[df.pp > threshold]
+        posax.scatter(cred_df.positionMb, cred_df.pp,
                       s=good_size, color=good_color, marker=good_marker)
         if good_label_column:
             for i, row in cred_df.iterrows():
-                fit_text(posax,row.positionMb, row.posterior+0.01,
+                fit_text(posax,row.positionMb, row.pp+0.01,
                          row[good_label_column],
                          rotation=good_label_rotation,
                          horizontalalignment="left",
                          verticalalignment='bottom')
+    print(posax.get_yticks())
+    posax.set_yticks([y for y in posax.get_yticks() if y >= 0 and y <= 1])
+    print(posax.get_yticks())
 
     if tracks:
         track_colors = track_colors[:len(tracks)]
@@ -417,12 +422,14 @@ def locus(df,
         # geneax.tick_params(which='both', left=False, labelleft=False)
         xlims = geneax.get_xlim()
         y = 0.25
-        for start, end, name1, name2, strand in genes:
+        for start, end, name, strand in genes:
             geneax.plot((start/1e6, end/1e6), (y,y))
-            geneax.text((start + end)/2e6, y+0.05, name1)
+            geneax.text((start + end)/2e6, y+0.05, name)
             y = 1-y
         geneax.set_xlim(xlims)
         geneax.set_ylim(0,1)
+
+    fig.tight_layout()
 
     return fig
 
