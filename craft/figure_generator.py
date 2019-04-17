@@ -61,27 +61,73 @@ def run(options):
 
     if options.ld:
         ld_array = read.ld(options.ld_file)
-        ld_rsids = read.ld_rsids(options.ld_rsids)
-        ld_chart1 = visualise.ld_block(ld_array, ld_rsids,
-                    labels=dict(mid='chr17', left=32857934, right=39475834))
+        cred_df = read.cred_annotated(options.cred_file)
+        cred_df = cred_df.sort_values('position', ascending=True)
+        cred_snps = list(cred_df['rsid'])
+        # build dictionary of SNP name to index from variant file
+        variant_df = read.variant_file(options.ld_rsids)
+        variant_dict = dict(zip(variant_df['RSID'],variant_df.index))
+        indexes = []
+        for key in variant_dict:
+            indexes.append(variant_dict[key])
+        positions = variant_df.position.unique()
+
+        ld_chart1 = visualise.ld_block(ld_array, indexes, names=None,
+                    labels=dict(mid=f"chromosome {cred_df.chromosome.unique()[0]}", left=min(positions), right=max(positions)))
         ld_chart1.savefig('ld1.png', dpi=300)
 
-        ld_array = read.ld(options.ld_file)
-        ld_rsids = read.ld_rsids(options.ld_rsids)
-        ld_chart2 = visualise.ld_block(ld_array, ld_rsids, colorbar=False,
-                    figsize=(8,6), labels=None)
-        ld_chart2.savefig('ld2.png', dpi=300)
+        indexes = []
+        for snp in cred_snps:
+            assert snp in variant_dict
+            indexes.append(variant_dict[snp])
+        # add positions and names using cred SNPs annotated.
+        positions = cred_df.position.unique()
+        names = cred_snps
 
-        ld_array = read.ld(options.ld_file)
-        ld_rsids = read.ld_rsids(options.ld_rsids)
-        ld_chart3 = visualise.ld_block(ld_array, ld_rsids,
-                    labels=dict(left=349805, right=54896745), colorbar=False,
-                    cmap='Greens')
-        ld_chart3.savefig('ld3.png', dpi=300)
+        ld_chart2 = visualise.ld_block(ld_array, indexes, names,
+                    labels=dict(mid=f"chromosome {cred_df.chromosome.unique()[0]}", left=min(positions), right=max(positions)))
+        ld_chart2.savefig('ld2.png', dpi=300)
 
     if options.locus and options.cred_type == 'abf':
         # tracknames come from unique values in var_effect column
         cred_df = read.abf_cred(options.cred_file)
+        tracknames= cred_df.var_effect.unique()
+        # Don't yet understand this bit.
+        nt = scipy.stats.hypergeom(50, len(tracknames), len(tracknames))
+        tracks = [','.join(numpy.random.choice(tracknames,size=i,replace=False)) for i in nt.rvs(size=1196)]
+        # Dataframe for cred snps
+        df = DataFrame({'rsid' : cred_df['rsid'],
+                        'position' : cred_df['position'],
+                        'posterior' : cred_df['pp'],
+                        'tracks' : tracks})
+        # with the probability chart on the bottom
+        locus_chart1 = visualise.locus(df, tracks=None, track_column='tracks', pos_top = False)
+        locus_chart1.savefig('locus1.png', dpi=300)
+        # without any tracks chart
+        locus_chart2 = visualise.locus(df, tracks=False)
+        locus_chart2.savefig('locus2.png', dpi=300)
+        # With the probability chart on the bottom and a number of other parameter tweaks.
+        # This shows some of the other design possibilities.
+        locus_chart3 = visualise.locus(df,
+                                    alpha_line_color='g',
+                                    alpha_line_style=':',
+                                    good_size=10,
+                                    good_marker='x',
+                                    good_color='r',
+                                    good_label_column=None,
+                                    tracks=tracknames[2:5],
+                                    track_good_linelength=0.8,
+                                    track_linelength=0.8,
+                                    track_alpha = 1,
+                                    pos_top = False,
+                                    track_height=0.25,
+                                    figsize=(6,6),
+                                    track_lines = True)
+        locus_chart3.savefig('locus3.png', dpi=300)
+
+    if options.locus and options.cred_type =='finemap':
+        # tracknames come from unique values in var_effect column
+        cred_df = read.finemap_cred(options.cred_file)
         tracknames= cred_df.var_effect.unique()
         # Don't yet understand this bit.
         nt = scipy.stats.hypergeom(50, len(tracknames), len(tracknames))

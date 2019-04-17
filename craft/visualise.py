@@ -59,13 +59,14 @@ def ld_block(array,
              figsize = (8, 5),
              cmap = 'Reds',
              colorbar = True):
-    """Create and return an linkage-disequilibrium block chart.
-    `array` is a square numpy array containing LD values. Only the upper
-    triangle of the array (above the diagonal) is used.
+    """Create and return an linkage-disequilibrium block chart.  `array`
+    is a square numpy array containing LD values (Pearson's
+    correlation coefficient r). Only the upper triangle of the array
+    (above the diagonal) is used. The values actually plotted are r^2.
 
     `indexes` is an iterable of index values into the rows and columns
-    of `array`, identifying the SNPs to display. If None, the whole
-    array is displayed.
+    of `array`, giving the order and identity of the SNPs to
+    display. If None, the whole array is displayed in array order.
 
     `names` is an iterable of names, which should be the same length
     as `indexes`, or the number of rows in `array`, used to display
@@ -103,6 +104,10 @@ def ld_block(array,
         assert max(l) < array.shape[0]
         array = array[..., l][l, ...]
 
+    # array contains Pearson's "r" coefficients. We plot r^2.
+    # Note: point-wise multiplication, not matrix multiplication!
+    array = array*array
+
     # how many items
     lds = array.shape[0]
 
@@ -115,8 +120,10 @@ def ld_block(array,
     cmap.set_bad('w') # so masked values are white
 
     # draw the actual block grid and rotate it as needed.
+    # force colormap range to 0-1.
     im = ax.imshow(array,
-                   cmap=cmap,
+                   cmap = cmap,
+                   vmin = 0, vmax = 1,
                    transform = (transforms.Affine2D().rotate_deg(-45)
                                 + ax.transData))
 
@@ -138,7 +145,8 @@ def ld_block(array,
 
     # draw the (optional) color bar.
     if colorbar:
-        fig.colorbar(im, ax=ax, shrink=0.5)
+        cbar = fig.colorbar(im, ax=ax, shrink=0.5)
+        cbar.set_label(label='$R^2$', rotation=0)
 
     # draw the label line and labels if required.
     if labels:
@@ -415,7 +423,6 @@ def locus(df,
             y = 1-y
         geneax.set_xlim(xlims)
         geneax.set_ylim(0,1)
-
 
     return fig
 
