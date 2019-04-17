@@ -1,0 +1,2 @@
+chromosome	allele1	allele2	rsid	position	all_total	cases_total	controls_total	maf	pvalue	beta	se	region_start_cm	region_end_cm	region_size_kb
+6	T	C	rs33980500	111913262	21744	3898	17846	0.070160	0.000000	0.476234	0.058170	111409253	111969092	559.800000
