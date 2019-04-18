@@ -30,7 +30,7 @@ SETTINGS
 ------------
 FINE-MAPPING (15/15)
 ------------
-- GWAS summary stats               : /tmp/tmpyhll3y1w/rs148401939.z
+- GWAS summary stats               : /tmp/tmp7s8py5tn/rs148401939.z
 - SNP correlations                 : output/results/chr1.analysis_2_2.snptest.maf0.01.out/rs148401939.ld
 - Causal SNP stats                 : output/results/chr1.analysis_2_2.snptest.maf0.01.out/rs148401939.snp
 - Causal configurations            : output/results/chr1.analysis_2_2.snptest.maf0.01.out/rs148401939.config
@@ -44,13 +44,13 @@ FINE-MAPPING (15/15)
    1 -> 0.6
    2 -> 0.3
    3 -> 0.0998
-- 15666 configurations evaluated (1.005/100%) : converged after 1005 iterations
-- Regional SNP heritability        : 0.0918 (SD: 0.00367 ; 95% CI: [0.0847,0.0992])
+- 20959 configurations evaluated (1.005/100%) : converged after 1005 iterations
+- Regional SNP heritability        : 0.0918 (SD: 0.00361 ; 95% CI: [0.0849,0.099])
 - Log10-BF of >= one causal SNP    : 420
 - Post-Pr(# of causal SNPs is k)   : 
   (0 -> 0)
    1 -> 0
    2 -> 1.26e-221
    3 -> 1
-- Run time                         : 0 hours, 0 minutes, 3 seconds
+- Run time                         : 0 hours, 0 minutes, 4 seconds
 
