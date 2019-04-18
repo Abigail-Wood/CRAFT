@@ -90,7 +90,7 @@ def main():
         index_df = pd.concat(index_df)
 
         # Output index SNPs
-        index_df.to_csv(f"{os.path.join(file_dir, file_name)}.index", sep='\t', float_format='%5f', index=False)
+        index_df.to_csv(f"{os.path.join(file_dir, file_name)}.index", sep='\t', index=False)
 
         # Get locus SNPs
         locus_dfs = gs.get_locus_snps(stats, index_df, options.distance_unit)
@@ -103,7 +103,7 @@ def main():
             data = annotate.prepare_df_annoVar(data)
             data = annotate.annotation_annoVar(data)
             # Output credible SNP set
-            data.to_csv(f"{os.path.join(file_dir, data.index_rsid.unique()[0])}.abf.cred", sep='\t', float_format='%5f', index=False)
+            data.to_csv(f"{os.path.join(file_dir, data.index_rsid.unique()[0])}.abf.cred", sep='\t', index=False)
 
         # Finemapping, if specified on command-line.
         if options.finemap_tool == "finemap":
@@ -116,7 +116,7 @@ def main():
                 cred_snps = pd.concat(cred_dfs)
                 cred_snps_annotated = annotate.finemap_annotation_annoVar(cred_snps, locus_dfs[i])
                 # write annotated SNPS dataframe as output file.
-                cred_snps_annotated.to_csv(f"{os.path.join(file_dir, row.rsid)}.cred.annotated", sep='\t', float_format='%5f', index=False)
+                cred_snps_annotated.to_csv(f"{os.path.join(file_dir, row.rsid)}.cred.annotated", sep='\t', index=False)
                 # increment index count to select next index
                 i+=1
         elif options.finemap_tool == "paintor":
