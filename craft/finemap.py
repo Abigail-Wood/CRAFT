@@ -77,11 +77,11 @@ def finemap(data_dfs, index_df, file_dir, n_causal_snps):
             # make a Z file
             order = ['rsid','chromosome','position','allele1','allele2','maf', 'beta', 'se']
             data = data[order]
-            data.to_csv(z_file, sep=' ', index=False)
+            data.to_csv(z_file, sep=' ', index=False, float_format='%g')
 
             # order of SNPs in LD file must correspond to order in Z file
             variants = data[['rsid','position','chromosome','allele1','allele2']]
-            variants.to_csv(variant_file, sep=' ', index=False, header=['RSID','position','chromosome','A_allele','B_allele'])
+            variants.to_csv(variant_file, sep=' ', index=False, header=['RSID','position','chromosome','A_allele','B_allele'], float_format='%g')
 
             # make an LD file (bcor)
             cmd = (ld_store_executable + " --bplink " + plink_basename + f" --bcor {bcor_file} --incl-range {region_start_cm}-{region_end_cm} --n-threads 1")

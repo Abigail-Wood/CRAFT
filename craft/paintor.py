@@ -47,11 +47,11 @@ def paintor(data_dfs, index_df):
             # Z-score = beta / se (the Wald statistic)
             data['ZSCORE'] = data['beta']/data['se']
             data = data.drop(['beta','se'], axis=1)
-            data.to_csv(locus_file, sep=' ', index=False, header=['CHR','POS','RSID','ALLELE1','ALLELE2','ZSCORE'])
+            data.to_csv(locus_file, sep=' ', index=False, header=['CHR','POS','RSID','ALLELE1','ALLELE2','ZSCORE'], float_format='%g')
 
             # order of SNPs in LD file must correspond to order in Z file
             variants = data[['rsid','position','chromosome','allele1','allele2']]
-            variants.to_csv(variant_file, sep=' ', index=False, header=['RSID','position','chromosome','A_allele','B_allele'])
+            variants.to_csv(variant_file, sep=' ', index=False, header=['RSID','position','chromosome','A_allele','B_allele'], float_format='%g')
 
             # make an LD file (bcor)
             cmd = (ld_store_executable + " --bplink " + plink_basename + f" --bcor {bcor_file} --incl-range {region_start_cm}-{region_end_cm} --n-threads 1")
@@ -64,7 +64,7 @@ def paintor(data_dfs, index_df):
             # Make an annotation file (all rows 0 to show 'no annotation')
             # Annotation library (large, 6.7GB download) is available from PAINTOR and may be implemented in future versions of this pipeline
             annotation_df = pd.DataFrame(1, index = np.arange(len(data.index)), columns=['dummy_annotation'])
-            annotation_df.to_csv(annotation_file, sep=' ',index=False, header=['dummy_annotation'])
+            annotation_df.to_csv(annotation_file, sep=' ',index=False, header=['dummy_annotation'], float_format='%g')
 
             # append row to input file
             input_file.write(f"{index_df.at[index_count, 'rsid']}\n")

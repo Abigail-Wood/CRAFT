@@ -31,7 +31,7 @@ def annotation_annoVar(df):
     with tempfile.TemporaryDirectory() as tempdir:
         # make file in tempdir, write to file
         to_annovar = os.path.join(tempdir, "to_annovar")
-        df.to_csv(to_annovar, sep='\t', index=False, header=False)
+        df.to_csv(to_annovar, sep='\t', index=False, header=False, float_format='%g')
         # perform annotation with ANNOVAR (give input, standard output)
         cmd = (f"{config.annovar_dir}/annotate_variation.pl -geneanno "
            "-dbtype refGene -buildver hg19 "
@@ -78,7 +78,7 @@ def finemap_annotation_annoVar(cred_snps, locus_df):
         # make file in tempdir
         to_annovar = os.path.join(tempdir, "to_annovar")
         cred_snps_prepared.to_csv(to_annovar, sep='\t', index=False,
-                                  header=False)
+                                  header=False, float_format='%g')
         # perform annotation with ANNOVAR (give input, standard output)
         cmd = (f"{config.annovar_dir}/annotate_variation.pl -geneanno "
                "-dbtype refGene -buildver hg19 "
