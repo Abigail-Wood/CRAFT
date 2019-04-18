@@ -45,8 +45,7 @@ def plink(file, frq_file):
 
 def csv(file):
     """Read csv data into an internal dataframe. """
-    cols = ['chromosome','rsid','alleleA','alleleB','position','all_total', 'cases_total','controls_total','all_maf','pvalue',
-    'beta', 'se']
+    cols = ['chromosome','allele1','allele2','rsid','position','all_total', 'cases_total','controls_total','maf','pvalue', 'beta', 'se']
     df = pd.read_csv(file, sep='\t')[cols]
     return df
 
