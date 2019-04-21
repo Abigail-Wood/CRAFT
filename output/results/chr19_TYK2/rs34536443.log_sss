@@ -1,0 +1,56 @@
+
+|--------------------------------------|
+| Welcome to FINEMAP v1.3.1            |
+|                                      |
+| (c) 2015-2018 University of Helsinki |
+|                                      |
+| Help :                               |
+| - ./finemap --help                   |
+| - www.finemap.me                     |
+| - www.christianbenner.com            |
+|                                      |
+| Contact:                             |
+| - christian.benner@helsinki.fi       |
+| - matti.pirinen@helsinki.fi          |
+|--------------------------------------|
+
+--------
+SETTINGS
+--------
+- dataset         : all
+- corr-config     : 0.95
+- n-causal-snps   : 3
+- n-configs-top   : 50000
+- n-convergence   : 1000
+- n-iterations    : 100000
+- prior-k0        : 0
+- prior-std       : 0.05 
+- prob-tol        : 0.001
+
+------------
+FINE-MAPPING (1/6)
+------------
+- GWAS summary stats               : /tmp/tmpuykapq9v/rs34536443.z
+- SNP correlations                 : output/results/chr19.analysis_2_2.snptest.maf0.01.out/rs34536443.ld
+- Causal SNP stats                 : output/results/chr19.analysis_2_2.snptest.maf0.01.out/rs34536443.snp
+- Causal configurations            : output/results/chr19.analysis_2_2.snptest.maf0.01.out/rs34536443.config
+- Credible sets                    : output/results/chr19.analysis_2_2.snptest.maf0.01.out/rs34536443.cred
+- Log file                         : output/results/chr19.analysis_2_2.snptest.maf0.01.out/rs34536443.log_sss
+
+- Number of GWAS samples           : 12801
+- Number of SNPs                   : 578
+- Prior-Pr(# of causal SNPs is k)  : 
+  (0 -> 0)
+   1 -> 0.6
+   2 -> 0.3
+   3 -> 0.0998
+- 156957 configurations evaluated (1.015/100%) : converged after 1015 iterations
+- Regional SNP heritability        : 0.00804 (SD: 0.00154 ; 95% CI: [0.00531,0.0113])
+- Log10-BF of >= one causal SNP    : 13.5
+- Post-Pr(# of causal SNPs is k)   : 
+  (0 -> 0)
+   1 -> 6.51e-07
+   2 -> 0.151
+   3 -> 0.849
+- Run time                         : 0 hours, 0 minutes, 10 seconds
+

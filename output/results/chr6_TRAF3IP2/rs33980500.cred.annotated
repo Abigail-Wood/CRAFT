@@ -1,0 +1,2 @@
+var_effect	genes	chromosome	position	allele1	allele2	rsid	all_total	cases_total	controls_total	maf	pvalue	beta	se	index_rsid	exonic_variant_function	genes_transcriptID	pp
+exonic	TRAF3IP2	6	111913262	C	T	rs33980500	12801	3609	9192	0.082824	4.11265e-26	0.529839	0.0501275	rs33980500	nonsynonymous SNV	TRAF3IP2:NM_147200:exon3:c.G55A:p.D19N,TRAF3IP2:NM_147686:exon2:c.G28A:p.D10N,TRAF3IP2:NM_001164281:exon2:c.G28A:p.D10N,	0.994858
