@@ -1,4 +1,4 @@
-craft.paintor
+paintor
 ---------------------------
 
 .. automodule:: craft.paintor

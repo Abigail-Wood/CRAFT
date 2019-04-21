@@ -1,5 +1,5 @@
-craft.main
+config
 ---------------------------
 
-.. automodule:: craft.main
+.. automodule:: craft.config
     :members:

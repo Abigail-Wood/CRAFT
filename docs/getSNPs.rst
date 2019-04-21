@@ -1,5 +1,5 @@
-craft.log
+getSNPs
 ---------------------------
 
-.. automodule:: craft.log
+.. automodule:: craft.getSNPs
     :members:

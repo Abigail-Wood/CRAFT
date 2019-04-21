@@ -11,24 +11,23 @@ Welcome to CRAFT's documentation!
    :maxdepth: 1
    :caption: CRAFT Pipeline Documentation:
 
-   craft.annotate
-   craft.abf
-   craft.caviarbf
-   craft.config
-   craft.finemap
-   craft.getSNPs
-   craft.log
-   craft.main
-   craft.paintor
-   craft.read
+   annotate
+   abf
+   config
+   finemap
+   getSNPs
+   log
+   main
+   paintor
+   read
 
 .. toctree::
    :maxdepth: 2
    :caption: Visualisation Documentation:
 
    visualisation_readme
-   craft.visualise
-   craft.figure_generator
+   figure_generator
+   visualise
 
 Indices and tables
 ==================

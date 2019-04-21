@@ -1,4 +1,4 @@
-craft.finemap
+finemap
 ---------------------------
 
 .. automodule:: craft.finemap
