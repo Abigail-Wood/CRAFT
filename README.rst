@@ -25,31 +25,40 @@ Quick start guide
 7. Optional - Change the config file to match the locations and name of the ANNOVAR, finemapping packages and genetic maps directories (if required).
 8. Optional - Make an empty 'output' folder if you want to run the test scripts.
 
+The CRAFT workflow
+------------------------------
+![CRAFT_workflow](https://user-images.githubusercontent.com/15981287/60351501-d56bef00-99bd-11e9-8c6f-b4b6217c7d1b.png)
+
 Input file formats
 ------------------
 
 GWAS summary statistics
 
-Input file is tab, space or comma-delimited and defined as follows:
+Input file is either in SNPTEST format or Plink.assoc.logistic format with an accompanying .frq.cc file.  
+Alternatively, you can reformat another dataset into the following columns and input it as a CSV file:  
 
-``
-RSID      CHROM  POS       A1  A2  A1_UNAFF  PVAL
-rs6823274   4     26098057  G   A   0.1484    0.4064
-rs76632663  2     43568820  T   G   0.06988   0.4427
-rs28719598  8     10943884  T   C   0.194     0.7702
-rs78519860  6     128145388 T   C   0.07869   0.9007
-``
+chromosome allele1 allele2 rsid position all_total cases_total controls_total maf pvalue beta se
+2 T G rs76632663 43568820 12000 8415 3585 0.481 0.00000005 0.110147 0.18791
+4 G A rs6823274 26098057 12000 8415 3585 0.345 0.00281 0.227728 0.155518 
+6 T C rs28719598 128145388 11885 8300 3585 0.215 0.0000006 0.195838 0.139291
+8 T C rs78519860 10943884 11885 8300 3585 0.101 0.5189 -0.154433 0.0791057
+
 
 Output
 ------
+Documentation still to be added; see output folder for examples of different types of output.
+
+CRAFT's ABF: produces an .abf.cred file as default.
+FINEMAP: produces .cred, .cred.annotated, .ld, .log_sss, .snp and .txt files as default.
 
 Test data
 ---------
-Currently we include two sets of test data, both for binary traits:
+Currently we include two sets of test data distributed with the package, both for binary traits:
 
-1. SNPTEST summary statistics from PsA patients (chromosome 1)
-2. PLINK .assoc.logistic and .frq.cc summary statistic files from PsA patients typed using Immunochip (chromosome 1)
-We have not (yet) tested this pipeline using data for quantitative traits.
+1. SNPTEST summary statistics from psoriatic arthritis (PsA) patients (chromosome 1)
+2. PLINK .assoc.logistic and .frq.cc summary statistic files from PsA patients typed using Immunochip (chromosome 1)  
+
+We have not (yet) tested this pipeline using data for quantitative traits, but have applied it to large datasets (>12 million SNPs) in patients with PsA, and are in the process of applying it in patients with JIA. 
 
 Did you find an issue / missing feature?
 ----------------------------------------
