@@ -27,29 +27,30 @@ Quick start guide
 
 The CRAFT workflow
 ------------------------------
-![CRAFT_workflow](https://user-images.githubusercontent.com/15981287/60351501-d56bef00-99bd-11e9-8c6f-b4b6217c7d1b.png)
+.. image:: https://user-images.githubusercontent.com/15981287/60351501-d56bef00-99bd-11e9-8c6f-b4b6217c7d1b.png
+        :alt: CRAFT workflow
 
 Input file formats
 ------------------
 
 GWAS summary statistics
 
-Input file is either in SNPTEST format or Plink.assoc.logistic format with an accompanying .frq.cc file.  
-Alternatively, you can reformat another dataset into the following columns and input it as a CSV file:  
+| Input file is either in SNPTEST format or Plink.assoc.logistic format with an accompanying .frq.cc file.  
+| Alternatively, you can reformat another dataset into the following columns and input it as a CSV file:  
 
-chromosome allele1 allele2 rsid position all_total cases_total controls_total maf pvalue beta se
-2 T G rs76632663 43568820 12000 8415 3585 0.481 0.00000005 0.110147 0.18791
-4 G A rs6823274 26098057 12000 8415 3585 0.345 0.00281 0.227728 0.155518 
-6 T C rs28719598 128145388 11885 8300 3585 0.215 0.0000006 0.195838 0.139291
-8 T C rs78519860 10943884 11885 8300 3585 0.101 0.5189 -0.154433 0.0791057
+| chromosome allele1 allele2 rsid position all_total cases_total controls_total maf pvalue beta se
+| 2 T G rs76632663 43568820 12000 8415 3585 0.481 0.00000005 0.110147 0.18791
+| 4 G A rs6823274 26098057 12000 8415 3585 0.345 0.00281 0.227728 0.155518 
+| 6 T C rs28719598 128145388 11885 8300 3585 0.215 0.0000006 0.195838 0.139291
+| 8 T C rs78519860 10943884 11885 8300 3585 0.101 0.5189 -0.154433 0.0791057
 
 
 Output
 ------
 Documentation still to be added; see output folder for examples of different types of output.
 
-CRAFT's ABF: produces an .abf.cred file as default.
-FINEMAP: produces .cred, .cred.annotated, .ld, .log_sss, .snp and .txt files as default.
+| CRAFT's ABF: produces an .abf.cred file as default.
+| FINEMAP: produces .cred, .cred.annotated, .ld, .log_sss, .snp and .txt files as default.
 
 Test data
 ---------
