@@ -56,6 +56,7 @@ def ld_block(array,
              indexes = None,
              names = None,
              labels = None,
+             text_kwargs = {},
              figsize = (8, 5),
              cmap = 'Reds',
              colorbar = True):
@@ -134,11 +135,12 @@ def ld_block(array,
 
     # add labels for each item, changing the view limits to fit.
     if names is not None:
+        kw = dict(rotation='vertical',
+                  horizontalalignment='center',
+                  verticalalignment='bottom')
+        kw.update(text_kwargs)
         for i,n in enumerate(names):
-            fit_text(ax, i*s2, 0, n,
-                     rotation='vertical',
-                     horizontalalignment='center',
-                     verticalalignment='bottom')
+            fit_text(ax, i*s2, 0, n, **kw)
 
     # don't draw axes,
     ax.set_axis_off()
@@ -185,7 +187,8 @@ def manhattan(df, x_label,
               good_color = 'g',
               good_marker = 'D',
               good_label_column = 'rsid',
-              good_label_rotation = 'vertical'):
+              good_label_rotation = 'vertical',
+              vertical_lines = []):
     """Draw and return a "Manhattan plot", with values above some
     critical threshold marked distinctly and labelled.
 
@@ -264,6 +267,10 @@ def manhattan(df, x_label,
                    color=alpha_line_color)
 
 
+    # if we want additional vertical lines (e.g. to mark out MHC on chr6)
+    for v in vertical_lines:
+        ax.axvline(v / 1e6, linewidth=0.5, color='k')
+
     # if we need to distinguish points:
     if alpha or (index_df is not None):
         # which points to distinguish:
@@ -297,11 +304,12 @@ def manhattan(df, x_label,
     return fig
 
 def locus(df,
-          threshold = 0.8,
+          cred_snps = None,
           figsize = (5, 8),
           size = 1,
           color = 'b',
           marker = '.',
+          threshold = 0.8,
           alpha_line_width = 0.5,
           alpha_line_color = '0.5',
           alpha_line_style = '--',
@@ -321,13 +329,108 @@ def locus(df,
           track_line_width=0.5,
           track_line_color='k',
           pos_top = False,
-          # future work:
           genes = None,
           gene_height = 0.5,
           ):
+    """Draw and return a "locus plot", with values above some
+    critical threshold marked distinctly and labelled.
+
+    `df` is a Pandas dataframe with two required columns:
+
+       "pp": the posterior probability of each SNP;
+       "position": the position of the SNP (in base-pairs);
+       "chromosome": the chromosome name or number (should be the same for every SNP).
+
+    If automatic labelling of credible SNPs is required,
+    (controlled by `cred_snps` or `alpha` parameter), the DataFrame
+    must also have a column labelled by the `good_label_column`
+    parameter.
+
+    If a tracks pane is required (controlled by `tracks` parameter),
+    the DataFrame must also have a column labelled by the
+    `track_column` parameter.
+
+    `figsize` is the figure size (width, height) in inches.
+
+    `size` is the point area for the main scatter plot, in square points.
+
+    `color` is the point color for the main scatter plot.
+
+    `marker` is the marker style for the main scatter plot.
+
+    `cred_snps`, if given, is a list of credible SNP IDs, or a list of
+    lists of credible SNP IDs. If the latter, the SNPs in each list
+    are drawn in a different color (see `good_color`).
+
+    `threshold` is a threshold for distinguishing credible SNPs. If
+    `cred_snps` is given then `threshold` is only used for drawing the
+    alpha line.
+
+    `alpha_line_width` is the width of the horizontal line to be drawn
+    at the alpha level.
+
+    `alpha_line_color` is the color specifier for the alpha line.
+
+    `alpha_line_style` is the line style for the alpha line.
+
+    `good_size` is the point area for credible SNPs, in square points.
+
+    `good_color` is the color for credible SNPs. If `cred_snps` is
+    given, and is a list of list of IDs, this should be a list of
+    colors (and defaults to ['r','g','b','c','m','y','k']).
+
+    `good_marker` is the marker style for credible SNPs.
+
+    `good_label_column` is the column name in `df` or `index_df` for
+    labels to be drawn for credible SNPs, or None for no labels.
+
+    `good_label_rotation` is the rotation for labels for "good" SNPs.
+
+    `tracks` is a list of track labels for the tracks pane, if required.
+
+    `track_height` is the height of the tracks pane, relative to the
+    posterior probability pane.
+
+    `track_column` is the name of a column in the `df` DataFrame. A
+    given SNP is shown on a track if its entry in this column
+    contains the corresponding label from the `tracks` parameter.
+
+    `track_colors` is a list of Matplotlib color descriptors, to be
+    used for the tracks.
+
+    `track_alpha` is the opacity of a track marker for a non-credible
+    SNP (credible SNPs have alpha 1.0).
+
+    `track_linelength` is the length of a track marker for a
+    non-credible SNP.
+
+    `track_good_linelength` is the length of a track marker for a
+    credible SNP.
+
+    `track_lines` controls whether to draw vertical lines under the
+    tracks pane, marking the credible SNPs.
+
+    `track_line_width` is the width of vertical lines under the
+    tracks pane marking credible SNPs.
+
+    `track_line_color` is the color of vertical lines under the tracks
+    pane marking credible SNPs.
+
+    `pos_top` controls whether the panes for tracks and genes are
+    above (True) or below (False) the posterior probabilty pane.
+
+    `genes` is a list of genes for the genes pane, if required. The
+    list member for each gene should be a tuple (start position,
+    end position, name, strand), where `strand` is "+" or "-".
+
+    `gene_height` is the height of the genes pane, relative to the
+    posterior probability pane.
+
+    """
+
     df['positionMb'] = df.position / 1e6
     total_height = 1 + track_height + gene_height
-    if tracks and (genes is not None):
+    if tracks and genes:
         height_ratios = [track_height, gene_height]
         if pos_top:
             height_ratios.push(1)
@@ -343,7 +446,7 @@ def locus(df,
             geneax, trackax, posax = axes
         bottomax = axes[-1]
 
-    elif tracks or (genes is not None):
+    elif tracks or genes:
         pos_index = 0 if pos_top else 1
         other_index = 1 - pos_index
         height2 = track_height if tracks else gene_height
@@ -368,33 +471,48 @@ def locus(df,
     posax.scatter(df.positionMb, df.pp,
                   s=size, color=color, marker=marker)
 
-    chromosome = df.chromosome.unique()[0]
     posax.set_ylabel('Posterior probability')
+    chromosome = df.chromosome.unique()[0]
     posax.set_ylim(0,1)
     bottomax.set_xlabel(f'Chromosome {chromosome}; position (Mbp)')
 
+    cred_dfs = None
     if threshold:
         posax.axhline(threshold,
                       linestyle=alpha_line_style,
                       linewidth=alpha_line_width,
                       color=alpha_line_color)
 
-        cred_df = df[df.pp > threshold]
-        posax.scatter(cred_df.positionMb, cred_df.pp,
-                      s=good_size, color=good_color, marker=good_marker)
-        if good_label_column:
-            for i, row in cred_df.iterrows():
-                fit_text(posax,row.positionMb, row.pp+0.01,
-                         row[good_label_column],
-                         rotation=good_label_rotation,
-                         horizontalalignment="left",
-                         verticalalignment='bottom')
-    print(posax.get_yticks())
+        if not cred_snps:
+            cred_df = df[df.pp > threshold]
+            cred_dfs = [cred_df]
+            good_colors = [good_color]
+
+    if cred_snps:
+        if isinstance(cred_snps[0], list):
+            cred_snps_list = cred_snps
+            good_colors = ['r','g','b','c','m','y','k']
+        else:
+            cred_snps_list=[cred_snps]
+            good_colors = [good_color]
+        cred_dfs = [df[df[good_label_column].isin(l)] for l in cred_snps_list]
+
+    if cred_dfs:
+        for i, cred_df in enumerate(cred_dfs):
+            posax.scatter(cred_df.positionMb, cred_df.pp,
+                          s=good_size, color=good_colors[i], marker=good_marker)
+            if good_label_column:
+                for j, row in cred_df.iterrows():
+                    fit_text(posax,row.positionMb, row.pp+0.01,
+                             row[good_label_column],
+                             rotation=good_label_rotation,
+                             horizontalalignment="left",
+                             verticalalignment='bottom')
+
     posax.set_yticks([y for y in posax.get_yticks() if y >= 0 and y <= 1])
-    print(posax.get_yticks())
 
     if tracks:
-        track_colors = track_colors[:len(tracks)]
+        track_colors = (track_colors + track_colors)[:len(tracks)]
         alpha = track_alpha if threshold else 1.0
         colors = [matplotlib.colors.to_rgba(c, alpha) for c in track_colors]
         trackax.set_ylabel('tracks')
@@ -419,12 +537,13 @@ def locus(df,
     if genes is not None:
         geneax.set_ylabel('genes')
         # geneax.spines['top'].set_visible(False)
-        # geneax.tick_params(which='both', left=False, labelleft=False)
+        geneax.tick_params(which='both', left=False, labelleft=False)
         xlims = geneax.get_xlim()
         y = 0.25
         for start, end, name, strand in genes:
+            name = name + r'$\rightarrow$' if strand == '+' else r'$\leftarrow$' + name
             geneax.plot((start/1e6, end/1e6), (y,y))
-            geneax.text((start + end)/2e6, y+0.05, name)
+            geneax.text((start + end)/2e6, y+0.05, name, horizontalalignment="center", clip_on=True)
             y = 1-y
         geneax.set_xlim(xlims)
         geneax.set_ylim(0,1)

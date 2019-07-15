@@ -1,5 +1,5 @@
-craft.read
+main
 ---------------------------
 
-.. automodule:: craft.read
+.. automodule:: craft.main
     :members:

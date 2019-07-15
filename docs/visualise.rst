@@ -1,4 +1,4 @@
-craft.visualise
+visualise
 ---------------------------
 
 .. automodule:: craft.visualise

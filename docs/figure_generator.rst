@@ -1,4 +1,4 @@
-craft.figure_generator
+figure_generator
 ---------------------------
 
 .. automodule:: craft.figure_generator

@@ -1,5 +1,5 @@
-craft.config
+log
 ---------------------------
 
-.. automodule:: craft.config
+.. automodule:: craft.log
     :members:
