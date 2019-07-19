@@ -17,8 +17,9 @@ base_annotation.vcf
 base_annotation.vep
 .pyc
 *.craft
-test.*
 output/
+test/snptest_data/chr*.analysis*
+visualise_*.sh
 
 # Developer notes files #
 #########################
@@ -30,6 +31,7 @@ annovar/
 PAINTOR_V3.0/
 LDstore/
 finemap/
+caviarBF/
 
 # Package distribution files #
 ##############################
