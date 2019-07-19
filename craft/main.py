@@ -70,9 +70,10 @@ def main():
     for file in file_names:
         file_name = os.path.basename(os.path.normpath(file))
         file_dir = f"{options.outdir}/{file_name}"
-        os.mkdir(file_dir)
+        if os.path.exists(file_dir) == False:
+            os.mkdir(file_dir)
         # Read input summary statistics
-        if options.type == 'plink': # dirty hack
+        if options.type == 'plink':
             if not options.frq:
                 log.error('Error: .frq.cc file not found!')
             stats = read.plink(file, options.frq)
