@@ -11,7 +11,12 @@ import craft.read as read
 def prepare_df_annoVar(df):
     """Prepare internal dataframe as input to ANNOVAR.
 
-    Docstring contents """
+    Generates a list of all the column names, adding a repeat of position to give start and end, as required by 
+    ANNOVAR input format, then reorders the columns to ensure the first 5 are those required by ANNOVAR 
+    (chromosome, start position, end position, reference allele, observed allele.) 
+
+    See annovar.openbioinformatics.org/en/latest/user-guide/input/ for more details. 
+     """
     # make a list of all column names; position repeats twice for input
     df['position2'] = df['position']
     wanted = ['chromosome', 'position', 'position2','allele1', 'allele2']
@@ -28,7 +33,7 @@ def annotation_annoVar(df):
     """Use ANNOVAR to annotate prepared internal dataframe.
 
     Describe ANNOVAR functions here. """
-    with tempfile.TemporaryDirectory() as tempdir:
+    with tempfile.TemporaryDirectory() tempdir as tempdir:
         # make file in tempdir, write to file
         to_annovar = os.path.join(tempdir, "to_annovar")
         df.to_csv(to_annovar, sep='\t', index=False, header=False, float_format='%g')
@@ -93,7 +98,6 @@ def finemap_annotation_annoVar(cred_snps, locus_df):
         to_annovar + ".exonic_variant_function", colnames)
         # Drop unnecessary columns from locus SNPs dataframe before merge
         df = df.drop(['position2', 'ABF','pp'], axis=1)
-        cred_snps = cred_snps.set_index('rsid')
         df = pd.merge(df, cred_snps, how='left',on='rsid')
         df = df.sort_values('pp', ascending=False)
     return df
