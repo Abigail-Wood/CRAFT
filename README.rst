@@ -10,7 +10,7 @@ Credible Refinement and Annotation of Functional Targets (CRAFT)
 * Free, open-source software: MIT license
 * Documentation: https://craft.readthedocs.io
 
-This repository is still in development; our package is not due for full release until end July 2019.
+Development of this repository is now dormant, and it is not being maintained. Please feel free to use our code base to develop further work, and we will keep the status of this project updated here. 
 
 (CRAFT) is a pipeline for the calculation, annotation and visualisation of credible SNP sets. It takes input as p-values from GWAS results. We have implemented this as a Python library, available via PyPI.
 
@@ -64,7 +64,7 @@ We have not (yet) tested this pipeline using data for quantitative traits, but h
 Did you find an issue / missing feature?
 ----------------------------------------
 
-We welcome all bug reports and requests for additional features using our GitHub issues tracker. This software will be supported by an active developer until at least 2020.
+We welcome all bug reports and requests for additional features using our GitHub issues tracker.
 
 References
 ------------
